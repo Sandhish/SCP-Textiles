@@ -50,7 +50,7 @@ const products = [
 
 export default function FeaturedProducts() {
     return (
-        <section className={styles.featuredProducts}>
+        <section id="featuredProducts" className={styles.featuredProducts}>
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h2 className={styles.title}>Featured Products</h2>
@@ -79,8 +79,8 @@ export default function FeaturedProducts() {
                                     <span className={styles.reviews}>({product.reviews})</span>
                                 </div>
                                 <div className={styles.prices}>
-                                    <span className={styles.price}>${product.price}</span>
-                                    <span className={styles.oldPrice}>${product.oldPrice}</span>
+                                    <span className={styles.price}>₹{product.price}</span>
+                                    <span className={styles.oldPrice}>₹{product.oldPrice}</span>
                                 </div>
                                 <button className={styles.addToCart}>Add to Cart</button>
                             </div>

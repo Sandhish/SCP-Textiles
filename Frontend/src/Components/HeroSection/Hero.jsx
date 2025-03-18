@@ -12,12 +12,12 @@ const Hero = () => {
                         finest materials for your comfort.
                     </p>
                     <div className={styles.buttons}>
-                        <Link to="/products" className={styles.primaryButton}>
+                        <a href="#featuredProducts" className={styles.primaryButton}>
                             Shop Collection
-                        </Link>
-                        <Link to="/about" className={styles.secondaryButton}>
+                        </a>
+                        <a href="#about" className={styles.secondaryButton}>
                             Learn More
-                        </Link>
+                        </a>
                     </div>
                 </div>
                 <div className={styles.imageContainer}>

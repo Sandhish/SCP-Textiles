@@ -12,7 +12,7 @@ export default function Navbar() {
             <div className={styles.container}>
                 <div className={styles.logo}>
                     <Link to="/">
-                        <h1>SCP Textile</h1>
+                        <img src="logo.png" alt="" className={styles.logoImg} />
                     </Link>
                 </div>
 
