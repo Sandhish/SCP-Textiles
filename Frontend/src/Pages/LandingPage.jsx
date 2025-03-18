@@ -4,6 +4,7 @@ import FeaturedProducts from '../Components/FeaturedProducts/FeaturedProducts'
 import Navbar from '../Components/Navbar/Navbar'
 import Category from '../Components/Category/Category'
 import Testimonials from '../Components/Testimonals/Testimonials'
+import Footer from '../Components/Footer/Footer'
 
 const LandingPage = () => {
   return (
@@ -13,6 +14,7 @@ const LandingPage = () => {
       <FeaturedProducts />
       <Category />
       <Testimonials />
+      <Footer />
     </>
   )
 }
