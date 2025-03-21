@@ -19,10 +19,12 @@ const UserSchema = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
-    }
+    },
+    otp: String,
+    otpExpiry: Date,
 }, {
     timestamps: true
-}); 
+});
 
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();

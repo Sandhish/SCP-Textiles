@@ -75,7 +75,7 @@ exports.forgotPassword = async (req, res) => {
       user.otp = otp;
       user.otpExpiry = otpExpiry;
       await user.save();
-
+      
       await sendOTPEmail(email, otp);
 
       res.json({ 
