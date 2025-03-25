@@ -20,7 +20,6 @@ const About = () => {
                     <p className={styles.highlightText}>
                         "Bringing Culture, Elegance, and Tradition Together."
                     </p>
-                    <button className={styles.learnMore}>Learn More</button>
                 </div>
             </div>
         </section>

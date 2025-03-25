@@ -75,33 +75,20 @@
   font-size: 16px;
   font-weight: 600;
   color: #333;
-  margin: 0;
+  margin-top: 14px;
   line-height: 1.4;
-}
-
-.sellerInfo {
-  font-size: 14px;
-  color: #666;
-  margin: 0;
 }
 
 .priceContainer {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 5px;
 }
 
 .price {
   font-size: 18px;
   font-weight: 700;
   color: #000;
-}
-
-.originalPrice {
-  font-size: 14px;
-  color: #999;
-  text-decoration: line-through;
 }
 
 .quantityControls {
@@ -183,12 +170,18 @@
 
 .continueShoppingButton {
   background-color: #fff;
-  color: #3498db;
-  border: 1px solid #3498db;
+  color: var(--button-color);
+  border: 1px solid var(--button-color);
 }
 
 .continueShoppingButton:hover {
   background-color: #f0f8ff;
+}
+
+.productVariant {
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0;
 }
 
 .clearCartButton {
@@ -241,12 +234,12 @@
 }
 
 .couponInput input:focus {
-  border-color: #3498db;
+  border-color: var(--button-color);
 }
 
 .applyCouponButton {
   padding: 0 20px;
-  background-color: #3498db;
+  background-color: var(--button-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -256,7 +249,7 @@
 }
 
 .applyCouponButton:hover {
-  background-color: #2980b9;
+  background-color: var(--button-hover-color);
 }
 
 .errorMessage {
@@ -275,7 +268,6 @@
   background-color: #f9f9f9;
   border-radius: 6px;
   padding: 15px;
-  margin-bottom: 20px;
 }
 
 .priceDetails h3 {
@@ -322,7 +314,7 @@
 .checkoutButton {
   width: 100%;
   padding: 14px 0;
-  background-color: #ff9f00;
+  background-color: var(--button-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -334,7 +326,7 @@
 }
 
 .checkoutButton:hover {
-  background-color: #f39000;
+  background-color: var(--button-hover-color);
 }
 
 .securePayment {
@@ -387,7 +379,7 @@
 
 .loader {
   border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
+  border-top: 5px solid var(--button-color);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -410,7 +402,7 @@
 
 .retryButton {
   padding: 10px 20px;
-  background-color: #3498db;
+  background-color: var(--button-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -421,7 +413,7 @@
 }
 
 .retryButton:hover {
-  background-color: #2980b9;
+  background-color: var(--button-hover-color);
 }
 
 .emptyCartContainer {
@@ -429,14 +421,11 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  min-height: 400px;
-  padding: 50px 0;
   text-align: center;
+  margin-top: 250px;
 }
 
 .emptyCartImage {
-  width: 200px;
-  height: 200px;
   opacity: 0.7;
 }
 
@@ -450,23 +439,95 @@
 .emptyCartContainer p {
   color: #777;
   font-size: 16px;
-  max-width: 400px;
+  max-width: 500px;
   margin: 0;
 }
 
 .continueShopping {
   padding: 12px 30px;
-  background-color: #3498db;
+  background-color: var(--button-color);
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  margin-top: 20px;
   transition: background-color 0.2s;
 }
 
 .continueShopping:hover {
-  background-color: #2980b9;
+  background-color: var(--button-hover-color);
+}
+
+@media (max-width: 1024px) {
+  .cartContainer {
+    padding: 15px;
+  }
+
+  .cartContent {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .orderSummary {
+    width: 100%;
+    position: static;
+    align-self: stretch;
+  }
+}
+
+@media (max-width: 600px) {
+  .cartHeader h1 {
+    font-size: 20px;
+  }
+
+  .cartItem {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .productImage {
+    width: 180px;
+    height: 180px;
+  }
+
+  .productDetails {
+    align-items: center;
+  }
+
+  .quantityControls {
+    margin-top: 10px;
+  }
+
+  .itemActions {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .couponInput {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .applyCouponButton {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .priceRow {
+    font-size: 13px;
+  }
+
+  .cartActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .continueShoppingButton, 
+  .clearCartButton {
+    width: 100%;
+  }
 }

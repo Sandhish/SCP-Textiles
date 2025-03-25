@@ -1,79 +1,162 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Search, ShoppingCart, UserRound } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Search, ShoppingCart, LogIn, LogOut, UserRound, X, Menu } from "lucide-react";
 import styles from "./Navbar.module.css";
 
-export default function Navbar() {
+const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [searchOpen, setSearchOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+
+        if (token && user) {
+            setIsLoggedIn(true);
+            setUserData(JSON.parse(user));
+        }
+
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 992);
+            if (window.innerWidth > 992) {
+                setMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+            setMenuOpen(false);
+        }
+    };
+
+    const closeMenu = () => {
+        setMenuOpen(false);
+    };
 
     return (
         <header className={styles.header}>
             <div className={styles.container}>
                 <div className={styles.logo}>
-                    <Link to="/">
-                        <img src="logo.png" alt="" className={styles.logoImg} />
+                    <Link to="/" onClick={closeMenu}>
+                        <img src="logo.png" alt="Logo" className={styles.logoImg} />
                     </Link>
                 </div>
 
-                <div className={`${styles.navigation} ${menuOpen ? styles.active : ""}`}>
+                {menuOpen && isMobile && (
+                    <div className={styles.mobileOverlay} onClick={closeMenu}>
+                        <div className={styles.mobileMenu} onClick={(e) => e.stopPropagation()} >
+                            <button className={styles.closeMenuButton} onClick={closeMenu} aria-label="Close menu" >
+                                <X size={24} />
+                            </button>
+
+                            <form className={styles.searchContainer} onSubmit={handleSearchSubmit}>
+                                <input type="text" placeholder="Search products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={styles.searchInput} />
+                                <button type="submit" className={styles.searchButton}>
+                                    <Search size={20} />
+                                </button>
+                            </form>
+
+                            <nav className={styles.mobileNav}>
+                                <ul>
+                                    <li><a href="#home" onClick={closeMenu}>Home</a></li>
+                                    <li><a href="#featuredProducts" onClick={closeMenu}>Products</a></li>
+                                    <li><a href="#category" onClick={closeMenu}>Categories</a></li>
+                                    <li><a href="#about" onClick={closeMenu}>About</a></li>
+
+                                    {isLoggedIn ? (
+                                        <>
+                                            <li><Link to="/profile" onClick={closeMenu}>Profile</Link></li>
+                                            <li><Link to="/logout" onClick={closeMenu}>Logout</Link></li>
+                                        </>
+                                    ) : (
+                                        <li><Link to="/login" onClick={closeMenu}>Login</Link></li>
+                                    )}
+                                </ul>
+                            </nav>
+
+                            <div className={styles.mobileSidebar}>
+                                <Link to="/cart" onClick={closeMenu} className={styles.mobileCartLink}>
+                                    <ShoppingCart />
+                                    <span className={styles.cartCount}>3</span>
+                                    Cart
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <div className={`${styles.navigation} ${!isMobile ? styles.desktopNavigation : ''}`}>
                     <nav className={styles.nav}>
                         <ul className={styles.navList}>
                             <li className={styles.navItem}>
-                                <Link to="/" className={styles.navLink}>Home</Link>
+                                <a href="#home" className={styles.navLink}>Home</a>
                             </li>
                             <li className={styles.navItem}>
-                                <Link to="/products/bedsheets" className={styles.navLink}>Bedsheets</Link>
+                                <a href="#featuredProducts" className={styles.navLink}>Products</a>
                             </li>
                             <li className={styles.navItem}>
-                                <Link to="/products/towels" className={styles.navLink}>Towels</Link>
+                                <a href="#category" className={styles.navLink}>Categories</a>
                             </li>
                             <li className={styles.navItem}>
-                                <Link to="/products/floormats" className={styles.navLink}>Floor Mats</Link>
-                            </li>
-                            <li className={styles.navItem}>
-                                <Link to="/products/pillowcovers" className={styles.navLink}>Pillow Covers</Link>
+                                <a href="#about" className={styles.navLink}>About</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
 
                 <div className={styles.actions}>
-                    <div className={`${styles.search} ${searchOpen ? styles.active : ""}`}>
-                        <button className={styles.searchToggle} onClick={() => setSearchOpen(!searchOpen)} aria-label="Toggle search" >
-                            <Search />
-                        </button>
-                        {searchOpen && (
-                            <div className={styles.searchContainer}>
-                                <input
-                                    type="text"
-                                    placeholder="Search products..."
-                                    className={styles.searchInput}
-                                />
-                                <button className={styles.searchButton}>Search</button>
-                            </div>
-                        )}
-                    </div>
+                    {!isMobile && (
+                        <form className={styles.searchContainer} onSubmit={handleSearchSubmit}>
+                            <input type="text" placeholder="Search products..." className={styles.searchInput}
+                                value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                            <button type="submit" className={styles.searchButton}>
+                                <Search size={20} />
+                            </button>
+                        </form>
+                    )}
 
                     <div className={styles.cart}>
                         <Link to="/cart" className={styles.cartLink}>
-                            <ShoppingCart />                            <span className={styles.cartCount}>3</span>
+                            <ShoppingCart />
+                            <span className={styles.cartCount}>3</span>
                         </Link>
                     </div>
 
                     <div className={styles.account}>
-                        <Link to="/account" className={styles.accountLink}><UserRound /></Link>
+                        {isLoggedIn ? (
+                            <div className={styles.userMenu}>
+                                <Link to="/profile" className={styles.accountLink}>
+                                    <UserRound />
+                                    <span className={styles.username}>
+                                        {userData?.name || 'Profile'}
+                                    </span>
+                                </Link>
+                            </div>
+                        ) : (
+                            <Link to="/login" className={styles.loginLink}>
+                                <LogIn />
+                                <span>Login</span>
+                            </Link>
+                        )}
                     </div>
 
-                    <button
-                        className={styles.menuToggle}
-                        onClick={() => setMenuOpen(!menuOpen)}
-                        aria-label="Toggle menu"
-                    >
-                        ☰
+                    <button className={styles.menuToggle} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" >
+                        {menuOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
                 </div>
             </div>
         </header>
     );
 }
+
+export default Navbar;

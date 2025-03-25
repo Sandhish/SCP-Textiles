@@ -1,57 +1,52 @@
 import React, { useState, useEffect } from 'react';
+import { FaShoppingCart } from "react-icons/fa";
 import styles from './Cart.module.css';
 
 const Cart = () => {
     const sampleCartItems = [
         {
             id: 1,
-            name: 'Wireless Bluetooth Headphones',
-            image: 'https://via.placeholder.com/120',
+            name: 'Luxury Cotton Bedsheet',
+            image: 'https://pepsdreamdecor.in/pepsadmin/pepsindia/public/storage/products/August2021/harmonize%20folded%20double%20bedsheets%20blush%20pink%20zig%20zag.jpg',
             price: 1499,
             quantity: 1,
-            seller: 'ElectronicsBazaar',
-            discount: 500,
-            originalPrice: 1999
+            color: 'White',
+            size: 'King'
         },
         {
             id: 2,
-            name: 'Premium Cotton T-Shirt',
-            image: 'https://via.placeholder.com/120',
-            price: 499,
+            name: 'Soft Microfiber Floor Mat',
+            image: 'https://5.imimg.com/data5/GR/UY/MY-24014740/floor-mat-1000x1000.jpg',
+            price: 599,
             quantity: 2,
-            seller: 'FashionHub',
-            discount: 100,
-            originalPrice: 599
+            color: 'Gray',
+            size: 'Medium'
         },
         {
             id: 3,
-            name: 'Smart Fitness Band',
-            image: 'https://via.placeholder.com/120',
-            price: 2999,
+            name: 'Premium Cotton Towel Set',
+            image: 'https://th.bing.com/th/id/OIP.VefLND7RJ6jwnPxoRr5aZAAAAA?rs=1&pid=ImgDetMain',
+            price: 799,
             quantity: 1,
-            seller: 'GadgetWorld',
-            discount: 1000,
-            originalPrice: 3999
+            color: 'Blue',
+            size: '4-Piece Set'
         },
         {
             id: 4,
-            name: 'Stainless Steel Water Bottle',
-            image: 'https://via.placeholder.com/120',
-            price: 399,
+            name: 'Soft Pillow Cover',
+            image: 'https://th.bing.com/th/id/OIP.xVPQjbZiZBim3kdcWF6p_gHaHa?pid=ImgDet&w=474&h=474&rs=1',
+            price: 299,
             quantity: 3,
-            seller: 'HomeEssentials',
-            discount: 100,
-            originalPrice: 499
+            color: 'Beige',
+            size: 'Standard'
         }
     ];
 
     const [cartItems, setCartItems] = useState(sampleCartItems);
-    const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [couponCode, setCouponCode] = useState('');
     const [couponApplied, setCouponApplied] = useState(false);
-    const [address, setAddress] = useState({});
-    const [paymentMethod, setPaymentMethod] = useState('');
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -75,17 +70,15 @@ const Cart = () => {
     };
 
     const calculateDiscount = () => {
-        let itemDiscount = cartItems.reduce((total, item) => total + (item.discount * item.quantity), 0);
-        let couponDiscount = couponApplied ? calculateSubtotal() * 0.1 : 0;
-        return itemDiscount + couponDiscount;
+        return couponApplied ? calculateSubtotal() * 0.1 : 0;
     };
 
     const calculateTax = () => {
-        return (calculateSubtotal() - calculateDiscount()) * 0.18; 
+        return (calculateSubtotal() - calculateDiscount()) * 0.18;
     };
 
     const calculateTotal = () => {
-        return calculateSubtotal() - calculateDiscount() + calculateTax() + 40; 
+        return calculateSubtotal() - calculateDiscount() + calculateTax() + 40;
     };
 
     const updateQuantity = (itemId, newQuantity) => {
@@ -163,7 +156,7 @@ const Cart = () => {
         return (
             <div className={styles.emptyCartContainer}>
                 <div className={styles.emptyCartImage}>
-                    <img src="https://via.placeholder.com/200?text=Empty+Cart" alt="Empty Cart" />
+                    <FaShoppingCart size={80} color="#555" />
                 </div>
                 <h2>Your cart is empty!</h2>
                 <p>Looks like you haven't added anything to your cart yet.</p>
@@ -190,43 +183,25 @@ const Cart = () => {
 
                             <div className={styles.productDetails}>
                                 <h3 className={styles.productName}>{item.name}</h3>
-                                <p className={styles.sellerInfo}>Sold by: {item.seller}</p>
-
+                                <p className={styles.productVariant}>Color: {item.color} | Size: {item.size}</p>
                                 <div className={styles.priceContainer}>
                                     <span className={styles.price}>₹{item.price.toLocaleString()}</span>
-                                    {item.originalPrice > item.price && (
-                                        <span className={styles.originalPrice}>₹{item.originalPrice.toLocaleString()}</span>
-                                    )}
                                 </div>
                             </div>
 
                             <div className={styles.quantityControls}>
-                                <button
-                                    className={styles.quantityButton}
-                                    disabled={item.quantity <= 1}
-                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                >
+                                <button className={styles.quantityButton} disabled={item.quantity <= 1}
+                                    onClick={() => updateQuantity(item.id, item.quantity - 1)} >
                                     -
                                 </button>
-                                <input
-                                    type="text"
-                                    className={styles.quantityInput}
-                                    value={item.quantity}
-                                    readOnly
-                                />
-                                <button
-                                    className={styles.quantityButton}
-                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                >
+                                <input type="text" className={styles.quantityInput} value={item.quantity} readOnly />
+                                <button className={styles.quantityButton} onClick={() => updateQuantity(item.id, item.quantity + 1)} >
                                     +
                                 </button>
                             </div>
 
                             <div className={styles.itemActions}>
-                                <button
-                                    className={styles.removeButton}
-                                    onClick={() => removeItem(item.id)}
-                                >
+                                <button className={styles.removeButton} onClick={() => removeItem(item.id)} >
                                     Remove
                                 </button>
                             </div>
@@ -234,16 +209,10 @@ const Cart = () => {
                     ))}
 
                     <div className={styles.cartActions}>
-                        <button
-                            className={styles.continueShoppingButton}
-                            onClick={() => window.location.href = '/'}
-                        >
+                        <button className={styles.continueShoppingButton} onClick={() => window.location.href = '/'} >
                             Continue Shopping
                         </button>
-                        <button
-                            className={styles.clearCartButton}
-                            onClick={() => setCartItems([])}
-                        >
+                        <button className={styles.clearCartButton} onClick={() => setCartItems([])} >
                             Clear Cart
                         </button>
                     </div>
@@ -254,16 +223,9 @@ const Cart = () => {
 
                     <div className={styles.couponSection}>
                         <div className={styles.couponInput}>
-                            <input
-                                type="text"
-                                placeholder="Enter Coupon Code"
-                                value={couponCode}
-                                onChange={(e) => setCouponCode(e.target.value)}
-                            />
-                            <button
-                                className={styles.applyCouponButton}
-                                onClick={applyCoupon}
-                            >
+                            <input type="text" placeholder="Enter Coupon Code" value={couponCode}
+                                onChange={(e) => setCouponCode(e.target.value)} />
+                            <button className={styles.applyCouponButton} onClick={applyCoupon} >
                                 Apply
                             </button>
                         </div>
@@ -285,7 +247,7 @@ const Cart = () => {
 
                         <div className={styles.priceRow}>
                             <span>Discount</span>
-                            <span className={styles.discountAmount}>-₹{calculateDiscount().toLocaleString()}</span>
+                            <span className={styles.discountAmount}>- ₹{calculateDiscount().toLocaleString()}</span>
                         </div>
 
                         <div className={styles.priceRow}>
@@ -308,10 +270,7 @@ const Cart = () => {
                         </div>
                     </div>
 
-                    <button
-                        className={styles.checkoutButton}
-                        onClick={proceedToCheckout}
-                    >
+                    <button className={styles.checkoutButton} onClick={proceedToCheckout} >
                         Proceed to Checkout
                     </button>
 
@@ -325,7 +284,6 @@ const Cart = () => {
                         <div className={styles.paymentIcons}>
                             <div className={styles.paymentIcon}>💳</div>
                             <div className={styles.paymentIcon}>💵</div>
-                            <div className={styles.paymentIcon}>💰</div>
                         </div>
                     </div>
                 </div>

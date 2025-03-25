@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
 import styles from "./Hero.module.css";
 
 const Hero = () => {
     return (
-        <section className={styles.hero}>
+        <section id="home" className={styles.hero}>
             <div className={styles.container}>
                 <div className={styles.content}>
                     <h1 className={styles.title}>Transform Your Home with Premium Textiles</h1>

@@ -156,6 +156,10 @@
     .rightSection {
       margin-top: 20px;
     }
+    .column h4::after {
+      margin: 10px auto;
+      margin-top: 5px;
+    }
   }
 
   @media (max-width: 434px) {

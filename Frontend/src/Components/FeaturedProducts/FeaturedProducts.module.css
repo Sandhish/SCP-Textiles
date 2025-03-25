@@ -1,5 +1,5 @@
 .featuredProducts {
-    padding: 90px 0 40px 0;
+    padding: 90px 0 0 0;
     background-color: #f8f9fa;
 }
 
@@ -94,26 +94,6 @@
     transform: translateX(0);
 }
 
-.actionButton {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: white;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #333;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.actionButton:hover {
-    background-color: #4a90e2;
-    color: white;
-}
-
 .content {
     padding: 20px;
 }
@@ -136,7 +116,7 @@
 }
 
 .name:hover {
-    color: #4a90e2;
+    color: var(--button-color);
 }
 
 .rating {
@@ -182,7 +162,7 @@
 .addToCart {
     width: 100%;
     padding: 12px;
-    background-color: #4a90e2;
+    background-color: var(--button-color);
     color: white;
     border: none;
     border-radius: 4px;
@@ -192,28 +172,28 @@
 }
 
 .addToCart:hover {
-    background-color: #3a7bc8;
+    background-color: var(--button-hover-color);
 }
 
 .viewAll {
     text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 .viewAllButton {
     display: inline-block;
-    padding: 15px 30px;
+    padding: 15px 26px;
     background-color: transparent;
-    color: #4a90e2;
+    color: var(--button-color);
     text-decoration: none;
     border-radius: 4px;
     font-weight: 600;
-    border: 2px solid #4a90e2;
+    border: 2px solid var(--button-color);
     transition: all 0.3s ease;
 }
 
 .viewAllButton:hover {
-    background-color: #4a90e2;
+    background-color: var(--button-hover-color);
     color: white;
 }
 
