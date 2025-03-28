@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaShoppingCart } from "react-icons/fa";
 import styles from './Cart.module.css';
+import CheckoutModal from '../../Components/CheckoutModal/CheckoutModal';
 
 const Cart = () => {
     const sampleCartItems = [
@@ -47,6 +48,7 @@ const Cart = () => {
     const [error, setError] = useState(null);
     const [couponCode, setCouponCode] = useState('');
     const [couponApplied, setCouponApplied] = useState(false);
+    const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -125,11 +127,11 @@ const Cart = () => {
     };
 
     const proceedToCheckout = () => {
-        try {
-            alert('Checkout successful! Order total: ₹' + calculateTotal().toFixed(2));
-        } catch (err) {
-            setError('Checkout failed');
-        }
+        setIsCheckoutModalOpen(true);
+    };
+
+    const closeCheckoutModal = () => {
+        setIsCheckoutModalOpen(false);
     };
 
     if (loading) {
@@ -168,127 +170,135 @@ const Cart = () => {
     }
 
     return (
-        <div className={styles.cartContainer}>
-            <div className={styles.cartHeader}>
-                <h1>Shopping Cart ({cartItems.length} items)</h1>
-            </div>
+        <>
+            <div className={styles.cartContainer}>
+                <div className={styles.cartHeader}>
+                    <h1>Shopping Cart ({cartItems.length} items)</h1>
+                </div>
 
-            <div className={styles.cartContent}>
-                <div className={styles.cartItemsContainer}>
-                    {cartItems.map((item) => (
-                        <div key={item.id} className={styles.cartItem}>
-                            <div className={styles.productImage}>
-                                <img src={item.image} alt={item.name} />
-                            </div>
+                <div className={styles.cartContent}>
+                    <div className={styles.cartItemsContainer}>
+                        {cartItems.map((item) => (
+                            <div key={item.id} className={styles.cartItem}>
+                                <div className={styles.productImage}>
+                                    <img src={item.image} alt={item.name} />
+                                </div>
 
-                            <div className={styles.productDetails}>
-                                <h3 className={styles.productName}>{item.name}</h3>
-                                <p className={styles.productVariant}>Color: {item.color} | Size: {item.size}</p>
-                                <div className={styles.priceContainer}>
-                                    <span className={styles.price}>₹{item.price.toLocaleString()}</span>
+                                <div className={styles.productDetails}>
+                                    <h3 className={styles.productName}>{item.name}</h3>
+                                    <p className={styles.productVariant}>Color: {item.color} | Size: {item.size}</p>
+                                    <div className={styles.priceContainer}>
+                                        <span className={styles.price}>₹{item.price.toLocaleString()}</span>
+                                    </div>
+                                </div>
+
+                                <div className={styles.quantityControls}>
+                                    <button className={styles.quantityButton} disabled={item.quantity <= 1}
+                                        onClick={() => updateQuantity(item.id, item.quantity - 1)} >
+                                        -
+                                    </button>
+                                    <input type="text" className={styles.quantityInput} value={item.quantity} readOnly />
+                                    <button className={styles.quantityButton} onClick={() => updateQuantity(item.id, item.quantity + 1)} >
+                                        +
+                                    </button>
+                                </div>
+
+                                <div className={styles.itemActions}>
+                                    <button className={styles.removeButton} onClick={() => removeItem(item.id)} >
+                                        Remove
+                                    </button>
                                 </div>
                             </div>
+                        ))}
 
-                            <div className={styles.quantityControls}>
-                                <button className={styles.quantityButton} disabled={item.quantity <= 1}
-                                    onClick={() => updateQuantity(item.id, item.quantity - 1)} >
-                                    -
-                                </button>
-                                <input type="text" className={styles.quantityInput} value={item.quantity} readOnly />
-                                <button className={styles.quantityButton} onClick={() => updateQuantity(item.id, item.quantity + 1)} >
-                                    +
-                                </button>
-                            </div>
-
-                            <div className={styles.itemActions}>
-                                <button className={styles.removeButton} onClick={() => removeItem(item.id)} >
-                                    Remove
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-
-                    <div className={styles.cartActions}>
-                        <button className={styles.continueShoppingButton} onClick={() => window.location.href = '/'} >
-                            Continue Shopping
-                        </button>
-                        <button className={styles.clearCartButton} onClick={() => setCartItems([])} >
-                            Clear Cart
-                        </button>
-                    </div>
-                </div>
-
-                <div className={styles.orderSummary}>
-                    <h2>Order Summary</h2>
-
-                    <div className={styles.couponSection}>
-                        <div className={styles.couponInput}>
-                            <input type="text" placeholder="Enter Coupon Code" value={couponCode}
-                                onChange={(e) => setCouponCode(e.target.value)} />
-                            <button className={styles.applyCouponButton} onClick={applyCoupon} >
-                                Apply
+                        <div className={styles.cartActions}>
+                            <button className={styles.continueShoppingButton} onClick={() => window.location.href = '/'} >
+                                Continue Shopping
+                            </button>
+                            <button className={styles.clearCartButton} onClick={() => setCartItems([])} >
+                                Clear Cart
                             </button>
                         </div>
-                        {error === 'Invalid coupon code' && (
-                            <p className={styles.errorMessage}>{error}</p>
-                        )}
-                        {couponApplied && (
-                            <p className={styles.successMessage}>Coupon applied successfully!</p>
-                        )}
                     </div>
 
-                    <div className={styles.priceDetails}>
-                        <h3>Price Details</h3>
+                    <div className={styles.orderSummary}>
+                        <h2>Order Summary</h2>
 
-                        <div className={styles.priceRow}>
-                            <span>Price ({cartItems.length} items)</span>
-                            <span>₹{calculateSubtotal().toLocaleString()}</span>
+                        <div className={styles.couponSection}>
+                            <div className={styles.couponInput}>
+                                <input type="text" placeholder="Enter Coupon Code" value={couponCode}
+                                    onChange={(e) => setCouponCode(e.target.value)} />
+                                <button className={styles.applyCouponButton} onClick={applyCoupon} >
+                                    Apply
+                                </button>
+                            </div>
+                            {error === 'Invalid coupon code' && (
+                                <p className={styles.errorMessage}>{error}</p>
+                            )}
+                            {couponApplied && (
+                                <p className={styles.successMessage}>Coupon applied successfully!</p>
+                            )}
                         </div>
 
-                        <div className={styles.priceRow}>
-                            <span>Discount</span>
-                            <span className={styles.discountAmount}>- ₹{calculateDiscount().toLocaleString()}</span>
+                        <div className={styles.priceDetails}>
+                            <h3>Price Details</h3>
+
+                            <div className={styles.priceRow}>
+                                <span>Price ({cartItems.length} items)</span>
+                                <span>₹{calculateSubtotal().toLocaleString()}</span>
+                            </div>
+
+                            <div className={styles.priceRow}>
+                                <span>Discount</span>
+                                <span className={styles.discountAmount}>- ₹{calculateDiscount().toLocaleString()}</span>
+                            </div>
+
+                            <div className={styles.priceRow}>
+                                <span>Delivery Charges</span>
+                                <span>₹40</span>
+                            </div>
+
+                            <div className={styles.priceRow}>
+                                <span>GST</span>
+                                <span>₹{calculateTax().toFixed(2)}</span>
+                            </div>
+
+                            <div className={styles.totalRow}>
+                                <span>Total Amount</span>
+                                <span>₹{calculateTotal().toFixed(2)}</span>
+                            </div>
+
+                            <div className={styles.savingsRow}>
+                                <span>You will save ₹{calculateDiscount().toLocaleString()} on this order</span>
+                            </div>
                         </div>
 
-                        <div className={styles.priceRow}>
-                            <span>Delivery Charges</span>
-                            <span>₹40</span>
+                        <button className={styles.checkoutButton} onClick={proceedToCheckout} >
+                            Proceed to Checkout
+                        </button>
+
+                        <div className={styles.securePayment}>
+                            <span className={styles.secureIcon}>🔒</span>
+                            <span>100% Secure Payments</span>
                         </div>
 
-                        <div className={styles.priceRow}>
-                            <span>GST</span>
-                            <span>₹{calculateTax().toFixed(2)}</span>
-                        </div>
-
-                        <div className={styles.totalRow}>
-                            <span>Total Amount</span>
-                            <span>₹{calculateTotal().toFixed(2)}</span>
-                        </div>
-
-                        <div className={styles.savingsRow}>
-                            <span>You will save ₹{calculateDiscount().toLocaleString()} on this order</span>
-                        </div>
-                    </div>
-
-                    <button className={styles.checkoutButton} onClick={proceedToCheckout} >
-                        Proceed to Checkout
-                    </button>
-
-                    <div className={styles.securePayment}>
-                        <span className={styles.secureIcon}>🔒</span>
-                        <span>100% Secure Payments</span>
-                    </div>
-
-                    <div className={styles.paymentMethods}>
-                        <span>We Accept:</span>
-                        <div className={styles.paymentIcons}>
-                            <div className={styles.paymentIcon}>💳</div>
-                            <div className={styles.paymentIcon}>💵</div>
+                        <div className={styles.paymentMethods}>
+                            <span>We Accept:</span>
+                            <div className={styles.paymentIcons}>
+                                <div className={styles.paymentIcon}>💳</div>
+                                <div className={styles.paymentIcon}>💵</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <CheckoutModal isOpen={isCheckoutModalOpen} onClose={closeCheckoutModal} finalTotal={calculateTotal()}
+                onSubmit={() => {
+                    closeCheckoutModal();
+                }}
+            />
+        </>
     );
 };
 

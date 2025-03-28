@@ -204,8 +204,8 @@ const ForgotPassword = () => {
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <div className={styles.backLink}>
-                <button type="button" onClick={() => navigate('/login')} className={styles.toggleLink}>
-                    Back to Login
+                <button type="button" onClick={() => navigate(-1)} className={styles.toggleLink}>
+                    Back
                 </button>
             </div>
         </form>

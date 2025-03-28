@@ -1,0 +1,67 @@
+.couponUploadContainer {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 130px;
+  }
+  
+  .pageTitle {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 22px;
+  }
+  
+  .uploadForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .label {
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 600;
+  }
+  
+  .input, 
+  .textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  
+  .submitButton {
+    background-color: var(--button-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: var(--button-hover-color);
+  }
+
+  @media(max-width:450px){
+    .couponUploadContainer{
+      margin-top: 250px;
+    }
+  }
