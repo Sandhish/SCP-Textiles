@@ -1,6 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-style: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+  font-family: "Open Sans", sans-serif;
+}
+
+:root{
+  --button-color: #805ad5;
+  --button-hover-color: #6b46c1;
 }

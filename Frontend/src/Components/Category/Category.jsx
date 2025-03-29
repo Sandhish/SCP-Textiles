@@ -32,9 +32,9 @@ const categories = [
     },
 ];
 
-export default function Category() {
+const Category = () => {
     return (
-        <section className={styles.categories}>
+        <section id="category" className={styles.categories}>
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h2 className={styles.title}>Shop by Category</h2>
@@ -59,3 +59,5 @@ export default function Category() {
         </section>
     );
 }
+
+export default Category;

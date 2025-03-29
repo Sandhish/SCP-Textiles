@@ -1,0 +1,175 @@
+.footer {
+    background: #222;
+    color: #fff;
+    padding: 40px 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 90%;
+    max-width: 1300px;
+    margin: auto;
+  }
+  
+  .leftSection {
+    margin-right: 30px;
+  }
+  
+  .logo {
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
+  .socialIcons {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .socialIcons a {
+    color: white;
+    font-size: 20px;
+    transition: color 0.3s ease;
+  }
+  
+  .socialIcons a:hover {
+    color: #805ad5; 
+  }
+  
+  .middleSection {
+    display: flex;
+    flex: 2;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .column {
+    min-width: 150px;
+  }
+  
+  .column h4 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .column h4::after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 2px;
+    background-color: white;
+    margin-top: 3px; 
+  }
+  
+  .column ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .column ul li {
+    margin-bottom: 8px;
+  }
+  
+  .column ul li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .column ul li a:hover {
+    color: #805ad5;
+  }
+  
+  .rightSection {
+    margin-left: 20px;
+  }
+  
+  .rightSection h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .address{
+    line-height: 25px;
+  }
+  
+  .newsletter {
+    margin-top: 10px;
+  }
+  
+  .newsletter input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-bottom: 2px solid white;
+    background: transparent;
+    color: white;
+    outline: none;
+  }
+  
+  .newsletter button {
+    background: white;
+    color: black;
+    padding: 8px 12px;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: transform 0.3s ease;
+  }
+  
+  .newsletter button:hover {
+    background: #dbdad6;
+    transform: scale(1.05);
+  }
+  
+  .contactNumber {
+    font-weight: bold;
+  }
+  
+  .contactEmail {
+    font-weight: bold;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .middleSection {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .socialIcons {
+      justify-content: center;
+    }
+  
+    .rightSection {
+      margin-top: 20px;
+    }
+    .column h4::after {
+      margin: 10px auto;
+      margin-top: 5px;
+    }
+  }
+
+  @media (max-width: 434px) {
+    .leftSection{
+        margin-right: 0px;
+        margin-bottom: 15px;
+    }
+
+    .rightSection{
+        margin-left: 0;
+    }
+  }
+  

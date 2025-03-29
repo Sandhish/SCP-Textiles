@@ -1,0 +1,311 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  transition: opacity 0.3s ease;
+}
+
+.userSidebar {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 350px;
+  height: 100vh;
+  background-color: white;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  transition: right 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.userSidebar.open {
+  right: 0;
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.sidebarHeader h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.backButton,
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+}
+
+.backButton:hover,
+.closeButton:hover {
+  background-color: #f0f0f0;
+}
+
+.sidebarContent {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarMenu {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  transition: background-color 0.2s;
+}
+
+.menuItem:hover {
+  background-color: #f5f5f5;
+}
+
+.profileContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.userProfileHeader {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.userAvatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: var(--button-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.userInfo {
+  flex-grow: 1;
+}
+
+.userInfo h3 {
+  margin: 0;
+  font-size: 18px;
+  text-align: left;
+}
+
+.userInfo p {
+  margin: 5px 0 0;
+  color: #666;
+  font-size: 14px;
+  text-align: left;
+}
+
+.profileStats {
+  display: flex;
+  justify-content: space-around;
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statItem span {
+  color: #666;
+  font-size: 12px;
+}
+
+.statItem strong {
+  margin-top: 5px;
+  font-size: 16px;
+}
+
+.orderList,
+.wishlistItems,
+.settingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+}
+
+.orderItem,
+.wishlistItem,
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.orderItem:hover,
+.wishlistItem:hover,
+.settingItem:hover {
+  background-color: #f0f0f0;
+}
+
+.orderDetails,
+.itemDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.orderDetails span:first-child,
+.itemDetails span:first-child {
+  font-weight: 500;
+  color: #333;
+}
+
+.orderDetails span:last-child,
+.itemDetails span:last-child {
+  color: #666;
+  font-size: 14px;
+}
+
+.logoutSection {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid #eaeaea;
+}
+
+.logoutButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border: none;
+  border-radius: 4px;
+  color: #e74c3c;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logoutButton:hover {
+  background-color: #f0f0f0;
+}
+
+@media (max-width: 480px) {
+  .userSidebar {
+    width: 100%;
+    right: -100%;
+  }
+}
+
+.wishlistItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.wishlistItemImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemDetails {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.productName {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.productPrice {
+  color: #666;
+  font-size: 14px;
+}
+
+.wishlistActions {
+  display: flex;
+  align-items: center;
+}
+
+.removeFromWishlist {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.removeFromWishlist:hover {
+  transform: scale(1.1);
+}
+
+.emptyWishlist {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #666;
+  text-align: center;
+}

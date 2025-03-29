@@ -7,7 +7,7 @@
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
@@ -16,21 +16,21 @@
     height: 80px;
 }
 
-.logo h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #333;
-    margin: 0;
-    cursor: pointer;
-}
-
-a{
-    text-decoration: none;
-}
-
-.navigation {
+.logo {
     display: flex;
     align-items: center;
+}
+
+.logoImg {
+    width: 120px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.desktopNavigation {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
 }
 
 .navList {
@@ -49,11 +49,22 @@ a{
     color: #333;
     font-size: 16px;
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: color .3s ease;
+    position: relative;
 }
 
 .navLink:hover {
-    color: #4a90e2;
+    color: var(--button-color);
+}
+
+.navLink:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--button-hover-color);
 }
 
 .actions {
@@ -61,53 +72,46 @@ a{
     align-items: center;
 }
 
-.search,
-.cart,
-.account {
-    margin-left: 20px;
-    position: relative;
-}
-
-.searchToggle,
-.cartLink,
-.accountLink {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #333;
+.searchContainer {
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-.searchContainer {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 300px;
-    padding: 15px;
-    background: #fff;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    display: flex;
-    z-index: 10;
+    overflow: hidden;
 }
 
 .searchInput {
-    flex: 1;
+    border: none;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px 0 0 4px;
+    width: 250px;
     font-size: 14px;
 }
 
+.searchInput:focus {
+    outline: none;
+}
+
 .searchButton {
-    padding: 10px 15px;
-    background: #4a90e2;
+    background: var(--button-color);
     color: white;
     border: none;
-    border-radius: 0 4px 4px 0;
+    padding: 10px 15px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.cart, .account {
+    margin-left: 15px;
+    position: relative;
+}
+
+.cartLink, .accountLink, .loginLink {
+    display: flex;
+    align-items: center;
+    color: #333;
+    text-decoration: none;
 }
 
 .cartCount {
@@ -116,62 +120,118 @@ a{
     right: -8px;
     background: #e74c3c;
     color: white;
-    font-size: 12px;
-    width: 18px;
-    height: 18px;
+    font-size: 10px;
+    width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
 }
 
-.menuToggle {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 21px;
-    background: transparent;
-    border: none;
+.userMenu {
     cursor: pointer;
-    padding: 0;
-    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.menuBar {
-    height: 3px;
+.username {
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+.loginLink {
+    gap: 5px;
+}
+
+.menuToggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.mobileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    background-color: #333;
-    border-radius: 10px;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mobileMenu {
+    width: 80%;
+    max-width: 400px;
+    height: 100%;
+    background: white;
+    padding: 20px;
+    padding-top: 45px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.closeMenuButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.mobileNav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.mobileNav ul li {
+    margin-bottom: 15px;
+}
+
+.mobileNav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    display: block;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.mobileSidebar {
+    margin-top: 20px;
+}
+
+.mbeSidebar{
+    color: #333;
+    margin-left: 9px;
+}
+
+.mobileCartLink {
+    display: flex;
+    align-items: center;
+    color: #333;
+    text-decoration: none;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 @media (max-width: 992px) {
-    .navigation {
-        position: fixed;
-        top: 80px;
-        left: 0;
-        width: 100%;
-        height: 0;
-        background-color: #fff;
-        overflow: hidden;
-        transition: height 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .navigation.active {
-        height: calc(100vh - 80px);
-    }
-
-    .navList {
-        flex-direction: column;
-        padding: 20px;
-    }
-
-    .navItem {
-        margin: 15px 0;
+    .navigation, 
+    .desktopNavigation, 
+    .actions .searchContainer,
+    .actions .cart, .cartCount,
+    .actions .account {
+        display: none !important; 
     }
 
     .menuToggle {
-        display: flex;
+        display: block;
     }
 }
