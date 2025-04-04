@@ -1,34 +1,35 @@
-import { Link } from "react-router-dom";
-import styles from "./Category.module.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styles from './Category.module.css';
 
 const categories = [
     {
         id: 1,
-        name: "Bedsheets",
-        image: "https://pepsdreamdecor.in/pepsadmin/pepsindia/public/storage/products/August2021/harmonize%20folded%20double%20bedsheets%20blush%20pink%20zig%20zag.jpg",
-        link: "/products/bedsheets",
-        description: "Luxurious comfort for a perfect night's sleep",
+        name: 'Bedsheets',
+        image: 'https://pepsdreamdecor.in/pepsadmin/pepsindia/public/storage/products/August2021/harmonize%20folded%20double%20bedsheets%20blush%20pink%20zig%20zag.jpg',
+        link: '/products/bedsheets',
+        description: 'Soft, breathable, and elegant for a restful sleep',
     },
     {
         id: 2,
-        name: "Towels",
-        image: "https://th.bing.com/th/id/OIP.VefLND7RJ6jwnPxoRr5aZAAAAA?rs=1&pid=ImgDetMain",
-        link: "/products/towels",
-        description: "Soft, absorbent, and quick-drying",
+        name: 'Towels',
+        image: 'https://th.bing.com/th/id/OIP.VefLND7RJ6jwnPxoRr5aZAAAAA?rs=1&pid=ImgDetMain',
+        link: '/products/towels',
+        description: 'Ultra-absorbent, quick-drying, and luxuriously soft',
     },
     {
         id: 3,
-        name: "Floor Mats",
-        image: "https://5.imimg.com/data5/GR/UY/MY-24014740/floor-mat-1000x1000.jpg",
-        link: "/products/floormats",
-        description: "Stylish protection for your floors",
+        name: 'Floor Mats',
+        image: 'https://5.imimg.com/data5/GR/UY/MY-24014740/floor-mat-1000x1000.jpg',
+        link: '/products/floormats',
+        description: 'Durable, stylish, and perfect for home protectionx',
     },
     {
         id: 4,
-        name: "Pillow Covers",
-        image: "https://th.bing.com/th/id/OIP.xVPQjbZiZBim3kdcWF6p_gHaHa?pid=ImgDet&w=474&h=474&rs=1",
-        link: "/products/pillowcovers",
-        description: "Add a touch of elegance to your bedroom",
+        name: 'Pillow Covers',
+        image: 'https://th.bing.com/th/id/OIP.xVPQjbZiZBim3kdcWF6p_gHaHa?pid=ImgDet&w=474&h=474&rs=1',
+        link: '/products/pillowcovers',
+        description: 'Elegant, comfortable, and long-lasting',
     },
 ];
 
@@ -58,6 +59,6 @@ const Category = () => {
             </div>
         </section>
     );
-}
+};
 
 export default Category;

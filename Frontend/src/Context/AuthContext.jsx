@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { checkAuth, logout as apiLogout } from '../Services/authService';
 
 const AuthContext = createContext();
 
@@ -7,15 +8,30 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const initializeAuth = () => {
+        const initializeAuth = async () => {
             try {
-                const token = localStorage.getItem('token');
-                if (token) {
-                    setUser({ token });
+                const storedUser = localStorage.getItem('user');
+
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+
+                    try {
+                        const { authenticated, user: serverUser } = await checkAuth();
+                        if (authenticated) {
+                            setUser(serverUser);
+                        } else {
+                            localStorage.removeItem('user');
+                            setUser(null);
+                        }
+                    } catch (err) {
+                        localStorage.removeItem('user');
+                        setUser(null);
+                    }
                 }
             } catch (error) {
                 console.error('Error initializing auth:', error);
-                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                setUser(null);
             } finally {
                 setLoading(false);
             }
@@ -24,21 +40,24 @@ export const AuthProvider = ({ children }) => {
         initializeAuth();
     }, []);
 
-    const login = (token) => {
+    const login = (userData) => {
         try {
-            localStorage.setItem('token', token);
-            setUser({ token });
+            localStorage.setItem('user', JSON.stringify(userData));
+            setUser(userData);
         } catch (error) {
             console.error('Error during login:', error);
         }
     };
 
-    const logout = () => {
+    const logout = async () => {
         try {
-            localStorage.removeItem('token');
+            await apiLogout(); 
+            localStorage.removeItem('user');
             setUser(null);
         } catch (error) {
             console.error('Error during logout:', error);
+            localStorage.removeItem('user');
+            setUser(null);
         }
     };
 
@@ -47,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     );

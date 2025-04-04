@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './LoginSignup.module.css';
 import { login, signup } from '../../Services/authService';
+import { useAuth } from '../../Context/AuthContext';
 
 const LoginSignup = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const LoginSignup = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const auth = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,8 +37,7 @@ const LoginSignup = () => {
         const { email, password } = formData;
         const response = await login({ email, password });
 
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        auth.login(response.user);
 
         navigate('/');
       } else {
@@ -49,8 +50,7 @@ const LoginSignup = () => {
         const { name, email, password } = formData;
         const response = await signup({ name, email, password });
 
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        auth.login(response.user);
 
         navigate('/');
       }
@@ -125,7 +125,7 @@ const LoginSignup = () => {
                 <a href="/forgot-password">Forgot Password?</a>
               </div>
             )}
-            
+
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <button type="submit" className={styles.submitButton} disabled={loading} >

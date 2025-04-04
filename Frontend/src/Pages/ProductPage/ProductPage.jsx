@@ -1,36 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaHeart, FaRegHeart, FaStar, FaRegStar } from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
 import { HiMinus } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import styles from "./ProductPage.module.css";
 
-const ProductPage = () => {
+const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
     const navigate = useNavigate();
+    const { id } = useParams();
     const [count, setCount] = useState(1);
     const [isInWishlist, setIsInWishlist] = useState(false);
-    const [wishlistItems, setWishlistItems] = useState([]);
-    const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const product = {
-        _id: "1",
-        name: "Handwoven Cotton Bedsheet",
-        image: "https://via.placeholder.com/300",
-        price: 1499,
-        quantity: 10,
-        description: "A beautifully crafted handwoven bedsheet made from 100% organic cotton.",
-        review: [
-            { customerName: "John Doe", rating: 4, comment: "Great quality!" },
-            { customerName: "Jane Smith", rating: 5, comment: "Super soft and comfortable." }
-        ]
-    };
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/${id}`);
+                setProduct(response.data);
+
+                try {
+                    const wishlistResponse = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist`, {
+                        withCredentials: true
+                    });
+                    const inWishlist = wishlistResponse.data.some(item => item.productId === id);
+                    setIsInWishlist(inWishlist);
+                } catch (wishlistError) {
+                    console.log("Couldn't fetch wishlist:", wishlistError);
+                }
+
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching product:', err);
+                setError('Failed to load product details. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchProduct();
+        }
+    }, [id]);
 
     const handleBack = () => {
         navigate(-1);
     };
 
     const increment = () => {
-        if (count < product.quantity) {
+        if (product && count < product.quantity) {
             setCount(count + 1);
         }
     };
@@ -41,21 +62,23 @@ const ProductPage = () => {
         }
     };
 
-    const handleAddToWishlist = () => {
-        if (isInWishlist) {
-            setWishlistItems(wishlistItems.filter((item) => item._id !== product._id));
-            setIsInWishlist(false);
-        } else {
-            setWishlistItems([...wishlistItems, product]);
-            setIsInWishlist(true);
-        }
-        setIsWishlistOpen(true);
+    const handleAddToWishlist = async () => {
+        
     };
 
-    const handleRemoveFromWishlist = (itemId) => {
-        setWishlistItems(wishlistItems.filter((item) => item._id !== itemId));
-        if (itemId === product._id) {
-            setIsInWishlist(false);
+    const handleAddToCart = async () => {
+        try {
+            await axios.post(  `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart/add`, {
+                productId: id,
+                quantity: count
+            }, {
+                withCredentials: true
+            });
+            alert('Product added to cart!');
+        } catch (err) {
+            console.error('Error adding to cart:', err);
+            alert('Please login to add to cart');
+            navigate('/login');
         }
     };
 
@@ -73,13 +96,17 @@ const ProductPage = () => {
         return stars;
     };
 
-    const addToCartFromWishlist = (item) => {
-        console.log("Added to cart from wishlist:", item);
-    };
-
     const writeReview = () => {
         console.log('Write a review');
     };
+
+    if (loading) {
+        return <div className={styles.loading}>Loading product details...</div>;
+    }
+
+    if (error || !product) {
+        return <div className={styles.error}>{error || "Product not found"}</div>;
+    }
 
     return (
         <div className={styles.productContainer}>
@@ -102,9 +129,11 @@ const ProductPage = () => {
 
                     <div className={styles.ratingContainer}>
                         <div className={styles.starRating}>
-                            {renderStars(4.5)}
+                            {renderStars(product.review && product.review.length > 0
+                                ? product.review.reduce((avg, r) => avg + r.rating, 0) / product.review.length
+                                : 0)}
                         </div>
-                        <span className={styles.ratingCount}>({product.review.length} reviews)</span>
+                        <span className={styles.ratingCount}>({product.review ? product.review.length : 0} reviews)</span>
                     </div>
 
                     <div className={styles.priceContainer}>
@@ -126,8 +155,12 @@ const ProductPage = () => {
                             </button>
                         </div>
 
-                        <button className={styles.addToCartButton} disabled={product.quantity <= 0} >
-                            Add to Cart
+                        <button
+                            className={styles.addToCartButton}
+                            disabled={product.quantity <= 0}
+                            onClick={handleAddToCart}
+                        >
+                            {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
                         </button>
                     </div>
                 </div>
@@ -159,24 +192,6 @@ const ProductPage = () => {
                     <h3>No reviews yet</h3>
                 )}
             </div>
-
-            {isWishlistOpen && (
-                <div className={styles.wishlistSidebar}>
-                    <h2>Wishlist</h2>
-                    {wishlistItems.map((item) => (
-                        <div key={item._id} className={styles.wishlistItem}>
-                            <img src={item.image} alt={item.name} />
-                            <div>
-                                <h3>{item.name}</h3>
-                                <p>Rs.{item.price}</p>
-                                <button onClick={() => handleRemoveFromWishlist(item._id)}>Remove</button>
-                                <button onClick={() => addToCartFromWishlist(item)}>Add to Cart</button>
-                            </div>
-                        </div>
-                    ))}
-                    <button onClick={() => setIsWishlistOpen(false)}>Close</button>
-                </div>
-            )}
         </div>
     );
 };

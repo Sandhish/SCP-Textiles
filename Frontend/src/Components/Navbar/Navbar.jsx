@@ -1,27 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, LogIn, UserRound, X, Menu } from "lucide-react";
+import { Search, ShoppingCart, UserRound, X, Menu } from "lucide-react";
 import styles from "./Navbar.module.css";
 import UserSidebar from "../Sidebar/Sidebar";
+import { useAuth } from "../../Context/AuthContext"; 
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData] = useState(null);
     const [userSidebarOpen, setUserSidebarOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
     const navigate = useNavigate();
 
+    const { user, isAuthenticated } = useAuth();
+
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
-
-        if (token && user) {
-            setIsLoggedIn(true);
-            setUserData(JSON.parse(user));
-        }
-
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 992);
             if (window.innerWidth > 992) {
@@ -34,7 +27,7 @@ const Navbar = () => {
     }, []);
 
     const handleAccountClick = () => {
-        if (isLoggedIn) {
+        if (isAuthenticated) {
             setUserSidebarOpen(true);
             setMenuOpen(false);
         } else {
@@ -85,7 +78,7 @@ const Navbar = () => {
                                         <li><a href="#category" onClick={closeMenu}>Categories</a></li>
                                         <li><a href="#about" onClick={closeMenu}>About</a></li>
 
-                                        {isLoggedIn ? (
+                                        {isAuthenticated ? (
                                             <>
                                                 <li className={styles.mbeSidebar} onClick={handleAccountClick}>Profile</li>
                                                 <li><Link to="/logout" onClick={closeMenu}>Logout</Link></li>
@@ -145,18 +138,17 @@ const Navbar = () => {
                         </div>
 
                         <div className={styles.account}>
-                            {isLoggedIn ? (
+                            {isAuthenticated ? (
                                 <div className={styles.userMenu} onClick={handleAccountClick}>
                                     <div className={styles.accountLink}>
                                         <UserRound />
                                         <span className={styles.username}>
-                                            {userData?.name || 'Profile'}
+                                            {user?.name || 'Profile'}
                                         </span>
                                     </div>
                                 </div>
                             ) : (
                                 <Link to="/login" className={styles.loginLink}>
-                                    <LogIn />
                                     <span>Login</span>
                                 </Link>
                             )}
@@ -169,7 +161,7 @@ const Navbar = () => {
                 </div>
             </header>
 
-            <UserSidebar isOpen={userSidebarOpen} onClose={() => setUserSidebarOpen(false)} userData={userData} />
+            <UserSidebar isOpen={userSidebarOpen} onClose={() => setUserSidebarOpen(false)} userData={user} />
         </>
     );
 }

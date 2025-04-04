@@ -1,12 +1,15 @@
 import Product from "../Models/Product.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
+
 dotenv.config();
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
 const getImageLink = async (file) => {
     try {
         return new Promise((resolve, reject) => {
@@ -28,24 +31,30 @@ const getImageLink = async (file) => {
         console.log(error);
     }
 };
+
 export const getProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        const { tag } = req.query;
+
+        const query = tag ? { tag } : {};
+
+        const products = await Product.find(query);
         res.json(products);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Server error" });
     }
 };
+
 export const createProduct = async (req, res) => {
     const file = req.file;
     if (!file) {
         return res.status(400).json({ message: "Please upload a file" });
     }
-    console.log(file);
-
-    const imageLink = await getImageLink(file);
 
     try {
+        const imageLink = await getImageLink(file);
+
         const product = await Product.create({
             image: imageLink,
             name: req.body.name,
@@ -53,14 +62,15 @@ export const createProduct = async (req, res) => {
             quantity: req.body.quantity,
             description: req.body.description,
             tag: req.body.tag,
-        })
+        });
+
         res.json(product);
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: error.message });
         console.log(error);
     }
-}
+};
+
 export const getProductById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -70,8 +80,10 @@ export const getProductById = async (req, res) => {
         res.json(product);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Server error" });
     }
-}
+};
+
 export const updateProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -83,21 +95,24 @@ export const updateProduct = async (req, res) => {
         product.quantity = req.body.quantity || product.quantity;
         product.description = req.body.description || product.description;
         product.tag = req.body.tag || product.tag;
+
         await product.save();
         res.json(product);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Server error" });
     }
-}
+};
+
 export const deleteProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findByIdAndDelete(req.params.id);
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
-        await product.remove();
         res.json({ message: "Product removed" });
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Server error" });
     }
-}
+};

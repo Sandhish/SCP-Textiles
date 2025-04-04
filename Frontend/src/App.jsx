@@ -10,6 +10,7 @@ import ProductList from './Pages/ProductList/ProductList';
 import ProductPage from './Pages/ProductPage/ProductPage';
 import Cart from './Pages/Cart/Cart';
 import AdminPage from './Pages/AdminPage';
+import ProtectedRoute from './Context/ProtectedRoute';
 
 function App() {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -39,14 +40,18 @@ function App() {
   };
 
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>} />
 
           <Route path="/" element={
             <LandingPage onAddToWishlist={handleAddToWishlist} onOpenSidebar={toggleSidebar} />
           } />
+
           <Route path="/login" element={<LoginSignup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/cart" element={<Cart />} />
@@ -60,8 +65,8 @@ function App() {
 
 
         <UserSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} initialWishlistItems={wishlistItems} />
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

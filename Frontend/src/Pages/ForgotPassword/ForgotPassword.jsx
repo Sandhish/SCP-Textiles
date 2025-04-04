@@ -175,7 +175,6 @@ const ForgotPassword = () => {
             const otpValue = otp.join('');
             await updatePassword(email, otpValue, passwords.password);
 
-            alert('Password has been reset successfully!');
             navigate('/login');
         } catch (error) {
             setError(error.response?.data?.message || 'Failed to reset password. Please try again.');

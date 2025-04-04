@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { UserRound, ShoppingBag, Heart, Settings, HelpCircle, LogOut, ChevronRight, X } from 'lucide-react';
 import styles from './Sidebar.module.css';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../Services/authService';
 
 const UserSidebar = ({ isOpen, onClose, userData, initialWishlistItems = [] }) => {
     const [activeView, setActiveView] = useState('profile');
@@ -87,6 +88,16 @@ const UserSidebar = ({ isOpen, onClose, userData, initialWishlistItems = [] }) =
         }
     };
 
+    const handleLogout = async () => {
+        localStorage.removeItem('user');
+        setWishlistItems([]);
+        setOrderItems([]);
+        setActiveView('profile');
+        setPreviousView(null);
+        await logout();
+        window.location.reload();
+    };
+
     const renderHeader = () => {
         switch (activeView) {
             case 'profile':
@@ -158,7 +169,7 @@ const UserSidebar = ({ isOpen, onClose, userData, initialWishlistItems = [] }) =
                         </div>
 
                         <div className={styles.logoutSection}>
-                            <button className={styles.logoutButton}>
+                            <button className={styles.logoutButton} onClick={() => { handleLogout(); }}>
                                 <LogOut />
                                 <span>Logout</span>
                             </button>

@@ -142,7 +142,22 @@
 }
 
 .loginLink {
+    margin-left: 10px;
+    border: var(--button-color) solid 2px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    color: var(--button-color);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
     gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.loginLink:hover {
+    transform: scale(1.1);
+    background-color: var(--button-hover-color);
+    color: white;
 }
 
 .menuToggle {
@@ -209,6 +224,7 @@
 .mbeSidebar{
     color: #333;
     margin-left: 9px;
+    cursor: pointer;
 }
 
 .mobileCartLink {
