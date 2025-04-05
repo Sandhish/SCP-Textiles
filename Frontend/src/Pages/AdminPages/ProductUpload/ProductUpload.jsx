@@ -1,17 +1,21 @@
 import React, { useState, useRef } from 'react';
 import styles from './ProductUpload.module.css';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const ProductUpload = () => {
     const [productData, setProductData] = useState({
         name: '',
         img: null,
         price: '',
+        quantity: 1,
         description: '',
         tag: ''
     });
+    const [loading, setLoading] = useState(false);
 
     const fileInputRef = useRef(null);
-    const tags = ['bedsheet', 'floor mat', 'towel', 'pillow cover'];
+    const tags = ['bedsheet', 'floor mat', 'towel', 'pillow cover', 'featured'];
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -39,14 +43,65 @@ const ProductUpload = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Product Data:', productData);
+        setLoading(true);
+
+        try {
+            const formData = new FormData();
+            formData.append('name', productData.name);
+            formData.append('price', productData.price);
+            formData.append('quantity', productData.quantity);
+            formData.append('description', productData.description);
+            formData.append('tag', productData.tag);
+            formData.append('image', productData.img);
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/create`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+
+            toast.success('Product uploaded successfully!', {
+                position: 'top-center',
+                duration: 3000
+            });
+
+            setProductData({
+                name: '',
+                img: null,
+                price: '',
+                quantity: 1,
+                description: '',
+                tag: ''
+            });
+
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+
+        } catch (error) {
+            console.error('Error uploading product:', error);
+            toast.error(
+                error.response?.data?.message || 'Failed to upload product. Please try again.',
+                {
+                    position: 'top-center',
+                    duration: 3000
+                }
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div className={styles.productUploadContainer}>
             <h2 className={styles.pageTitle}>Upload New Product</h2>
+
             <form onSubmit={handleSubmit} className={styles.uploadForm}>
                 <div className={styles.formGroup}>
                     <label htmlFor="name" className={styles.label}>Product Name</label>
@@ -91,6 +146,12 @@ const ProductUpload = () => {
                 </div>
 
                 <div className={styles.formGroup}>
+                    <label htmlFor="quantity" className={styles.label}>Quantity</label>
+                    <input type="number" id="quantity" name="quantity" value={productData.quantity} onChange={handleInputChange}
+                        className={styles.input} min="1" required />
+                </div>
+
+                <div className={styles.formGroup}>
                     <label htmlFor="description" className={styles.label}>Description</label>
                     <textarea id="description" name="description" value={productData.description}
                         onChange={handleInputChange} className={styles.textarea} required />
@@ -107,8 +168,8 @@ const ProductUpload = () => {
                     </select>
                 </div>
 
-                <button type="submit" className={styles.submitButton}>
-                    Upload Product
+                <button type="submit" className={styles.submitButton} disabled={loading}>
+                    {loading ? 'Uploading...' : 'Upload Product'}
                 </button>
             </form>
         </div>

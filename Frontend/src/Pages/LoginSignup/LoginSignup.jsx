@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './LoginSignup.module.css';
-import { login, signup } from '../../Services/authService';
+import { login, signup, adminLogin } from '../../Services/authService';
 import { useAuth } from '../../Context/AuthContext';
 
 const LoginSignup = () => {
@@ -35,11 +35,28 @@ const LoginSignup = () => {
     try {
       if (isLogin) {
         const { email, password } = formData;
-        const response = await login({ email, password });
+        try {
+          const adminResponse = await adminLogin({ email, password });
 
-        auth.login(response.user);
+          const adminUser = {
+            email: email,
+            message: adminResponse.message,
+            isAdmin: true
+          };
 
-        navigate('/');
+          auth.login(adminUser);
+          navigate('/admin');
+          return;
+        } catch (adminError) {
+          const response = await login({ email, password });
+
+          auth.login({
+            ...response.user,
+            isAdmin: false
+          });
+
+          navigate('/');
+        }
       } else {
         if (formData.password !== formData.confirmPassword) {
           setError('Passwords do not match');
@@ -50,7 +67,10 @@ const LoginSignup = () => {
         const { name, email, password } = formData;
         const response = await signup({ name, email, password });
 
-        auth.login(response.user);
+        auth.login({
+          ...response.user,
+          isAdmin: false
+        });
 
         navigate('/');
       }

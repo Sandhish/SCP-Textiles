@@ -13,20 +13,28 @@ export const AuthProvider = ({ children }) => {
                 const storedUser = localStorage.getItem('user');
 
                 if (storedUser) {
-                    setUser(JSON.parse(storedUser));
+                    const parsedStoredUser = JSON.parse(storedUser);
+                    setUser(parsedStoredUser);
 
                     try {
                         const { authenticated, user: serverUser } = await checkAuth();
+
                         if (authenticated) {
-                            setUser(serverUser);
+                            const isAdmin = parsedStoredUser.isAdmin || false;
+
+                            setUser({
+                                ...serverUser,
+                                isAdmin: isAdmin
+                            });
                         } else {
                             localStorage.removeItem('user');
                             setUser(null);
                         }
                     } catch (err) {
-                        localStorage.removeItem('user');
-                        setUser(null);
+                        console.error('Auth check error:', err);
                     }
+                } else {
+                    setUser(null);
                 }
             } catch (error) {
                 console.error('Error initializing auth:', error);
@@ -42,8 +50,13 @@ export const AuthProvider = ({ children }) => {
 
     const login = (userData) => {
         try {
-            localStorage.setItem('user', JSON.stringify(userData));
-            setUser(userData);
+            const userWithAdminFlag = {
+                ...userData,
+                isAdmin: userData.isAdmin || false
+            };
+
+            localStorage.setItem('user', JSON.stringify(userWithAdminFlag));
+            setUser(userWithAdminFlag);
         } catch (error) {
             console.error('Error during login:', error);
         }
@@ -51,7 +64,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await apiLogout(); 
+            await apiLogout();
             localStorage.removeItem('user');
             setUser(null);
         } catch (error) {
@@ -66,7 +79,14 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{
+            user,
+            login,
+            logout,
+            loading,
+            isAuthenticated: !!user,
+            isAdmin: user?.isAdmin || false
+        }}>
             {children}
         </AuthContext.Provider>
     );

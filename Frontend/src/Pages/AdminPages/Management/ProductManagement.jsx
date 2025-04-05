@@ -1,61 +1,96 @@
-import React, { useState } from 'react';
-import { Edit, Trash2, X, Upload } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Edit, Trash2, X } from 'lucide-react';
 import styles from './Management.module.css';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const ProductManagement = () => {
-    const [products, setProducts] = useState([
-        {
-            id: 1,
-            name: 'Premium Cotton Bedsheet',
-            price: 19.99,
-            tag: 'bedsheet',
-            description: 'Soft, breathable 100% cotton bedsheet',
-            image: null
-        },
-        {
-            id: 2,
-            name: 'Luxury Turkish Towel',
-            price: 29.99,
-            tag: 'towel',
-            description: 'Ultra-absorbent Turkish cotton towel',
-            image: null
-        }
-    ]);
-
+    const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentProduct, setCurrentProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const fetchProducts = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/products`);
+            setProducts(response.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            toast.error('Failed to load products. Please try again.', {
+                position: 'top-center',
+                duration: 3000
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
     const handleEditProduct = (product) => {
         setCurrentProduct({ ...product });
         setIsModalOpen(true);
     };
 
-    const handleSaveProduct = (e) => {
+    const handleSaveProduct = async (e) => {
         e.preventDefault();
-        if (currentProduct.id) {
+
+        try {
+            const updatedData = {
+                name: currentProduct.name,
+                price: currentProduct.price,
+                quantity: currentProduct.quantity,
+                description: currentProduct.description,
+                tag: currentProduct.tag
+            };
+
+            const response = await axios.put(
+                `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/update/${currentProduct._id}`,
+                updatedData
+            );
+
             setProducts(prev =>
-                prev.map(p => p.id === currentProduct.id ? currentProduct : p)
+                prev.map(p => p._id === currentProduct._id ? response.data : p)
+            );
+
+            toast.success('Product updated successfully!', {
+                position: 'top-center',
+                duration: 3000
+            });
+
+            setIsModalOpen(false);
+            setCurrentProduct(null);
+        } catch (error) {
+            console.error('Error saving product:', error);
+            toast.error(
+                error.response?.data?.message || 'Failed to save product. Please try again.',
+                {
+                    position: 'top-center',
+                    duration: 3000
+                }
             );
         }
-        setIsModalOpen(false);
-        setCurrentProduct(null);
     };
 
-    const handleDeleteProduct = (id) => {
-        setProducts(prev => prev.filter(p => p.id !== id));
-    };
-
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setCurrentProduct(prev => ({
-                    ...prev,
-                    image: reader.result
-                }));
-            };
-            reader.readAsDataURL(file);
+    const handleDeleteProduct = async (id) => {
+        if (window.confirm('Are you sure you want to delete this product?')) {
+            try {
+                await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/delete/${id}`);
+                setProducts(prev => prev.filter(p => p._id !== id));
+                toast.success('Product deleted successfully!', {
+                    position: 'top-center',
+                    duration: 3000
+                });
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                toast.error('Failed to delete product. Please try again.', {
+                    position: 'top-center',
+                    duration: 3000
+                });
+            }
         }
     };
 
@@ -66,15 +101,13 @@ const ProductManagement = () => {
             <div className={styles.modalOverlay}>
                 <div className={styles.modalContent}>
                     <button onClick={() => {
-                            setIsModalOpen(false);
-                            setCurrentProduct(null);
-                        }}
+                        setIsModalOpen(false);
+                        setCurrentProduct(null);
+                    }}
                         className={styles.modalCloseButton} >
                         <X size={24} />
                     </button>
-                    <h2 className="text-2xl font-bold mb-4">
-                        Edit Product
-                    </h2>
+                    <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
                     <form onSubmit={handleSaveProduct} className={styles.formContainer}>
                         <div className={styles.formGroup}>
                             <label className={styles.formLabel}>Product Name</label>
@@ -95,12 +128,29 @@ const ProductManagement = () => {
                                 step="0.01" required />
                         </div>
                         <div className={styles.formGroup}>
+                            <label className={styles.formLabel}>Quantity</label>
+                            <input type="number" className={styles.formInput} value={currentProduct?.quantity || ''}
+                                onChange={(e) => setCurrentProduct(prev => ({
+                                    ...prev,
+                                    quantity: parseInt(e.target.value)
+                                }))}
+                                min="1" required />
+                        </div>
+                        <div className={styles.formGroup}>
                             <label className={styles.formLabel}>Tag</label>
-                            <input type="text" className={styles.formInput} value={currentProduct?.tag || ''}
+                            <select className={styles.formSelect} value={currentProduct?.tag || ''}
                                 onChange={(e) => setCurrentProduct(prev => ({
                                     ...prev,
                                     tag: e.target.value
-                                }))} />
+                                }))}
+                                required>
+                                <option value="">Select a Tag</option>
+                                <option value="bedsheet">bedsheet</option>
+                                <option value="floor mat">floor mat</option>
+                                <option value="towel">towel</option>
+                                <option value="pillow cover">pillow cover</option>
+                                <option value="featured">featured</option>
+                            </select>
                         </div>
                         <div className={styles.formGroup}>
                             <label className={styles.formLabel}>Description</label>
@@ -111,18 +161,7 @@ const ProductManagement = () => {
                                 }))}
                                 required />
                         </div>
-                        <div className={styles.imageUploadContainer}>
-                            {currentProduct?.image && (
-                                <img src={currentProduct.image} alt="Product Preview" className={styles.imagePreview} />
-                            )}
-                            <input type="file" id="productImage" className={styles.fileInput} accept="image/*" onChange={handleImageUpload} />
-                            <label htmlFor="productImage" className={styles.fileInputLabel}>
-                                <Upload size={20} /> Upload Image
-                            </label>
-                        </div>
-                        <button type="submit" className={styles.formSubmitButton} >
-                            Save Product
-                        </button>
+                        <button type="submit" className={styles.formSubmitButton}>Update Product</button>
                     </form>
                 </div>
             </div>
@@ -135,39 +174,59 @@ const ProductManagement = () => {
                 <h2 className={styles.pageTitle}>Product Management</h2>
             </div>
 
-            <div className={styles.dataTable}>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Tag</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {products.map(product => (
-                            <tr key={product.id}>
-                                <td>{product.id}</td>
-                                <td>{product.name}</td>
-                                <td>${product.price.toFixed(2)}</td>
-                                <td>{product.tag}</td>
-                                <td className={styles.actionCell}>
-                                    <button className={`${styles.actionButton} ${styles.editButton}`}
-                                        onClick={() => handleEditProduct(product)} >
-                                        <Edit size={16} /> Edit
-                                    </button>
-                                    <button className={`${styles.actionButton} ${styles.deleteButton}`}
-                                        onClick={() => handleDeleteProduct(product.id)}  >
-                                        <Trash2 size={16} /> Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            {loading ? (
+                <div className={styles.loading}>Loading products...</div>
+            ) : (
+                <div className={styles.dataTable}>
+                    {products.length === 0 ? (
+                        <p className={styles.noData}>No products found.</p>
+                    ) : (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Tag</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.map(product => (
+                                    <tr key={product._id}>
+                                        <td>{product._id.substring(0, 8)}...</td>
+                                        <td>
+                                            {product.image && (
+                                                <img
+                                                    src={product.image}
+                                                    alt={product.name}
+                                                    className={styles.thumbnailImage}
+                                                />
+                                            )}
+                                        </td>
+                                        <td>{product.name}</td>
+                                        <td>₹{product.price.toFixed(2)}</td>
+                                        <td>{product.quantity}</td>
+                                        <td>{product.tag}</td>
+                                        <td className={styles.actionCell}>
+                                            <button className={`${styles.actionButton} ${styles.editButton}`}
+                                                onClick={() => handleEditProduct(product)} >
+                                                <Edit size={16} /> Edit
+                                            </button>
+                                            <button className={`${styles.actionButton} ${styles.deleteButton}`}
+                                                onClick={() => handleDeleteProduct(product._id)} >
+                                                <Trash2 size={16} /> Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
 
             {renderProductModal()}
         </div>

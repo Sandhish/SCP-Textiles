@@ -11,6 +11,7 @@ import ProductPage from './Pages/ProductPage/ProductPage';
 import Cart from './Pages/Cart/Cart';
 import AdminPage from './Pages/AdminPage';
 import ProtectedRoute from './Context/ProtectedRoute';
+import ToastProvider from './Context/ToastProvider';
 
 function App() {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -40,33 +41,33 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/admin" element={
-            <ProtectedRoute>
-              <AdminPage />
-            </ProtectedRoute>} />
+    <ToastProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/admin" element={
+              <ProtectedRoute adminOnly={true}>
+                <AdminPage />
+              </ProtectedRoute>} />
 
-          <Route path="/" element={
-            <LandingPage onAddToWishlist={handleAddToWishlist} onOpenSidebar={toggleSidebar} />
-          } />
+            <Route path="/" element={
+              <LandingPage onAddToWishlist={handleAddToWishlist} onOpenSidebar={toggleSidebar} />
+            } />
 
-          <Route path="/login" element={<LoginSignup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/products/:category" element={
-            <ProductList onAddToWishlist={handleAddToWishlist} onOpenSidebar={toggleSidebar} />
-          } />
-          <Route path="/product/:id" element={
-            <ProductPage onAddToWishlist={handleAddToWishlist} onOpenSidebar={toggleSidebar} />
-          } />
-        </Routes>
-
-
-        <UserSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} initialWishlistItems={wishlistItems} />
-      </AuthProvider>
-    </BrowserRouter>
+            <Route path="/login" element={<LoginSignup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/products/:category" element={
+              <ProductList onAddToWishlist={handleAddToWishlist} onOpenSidebar={toggleSidebar} />
+            } />
+            <Route path="/product/:id" element={
+              <ProductPage onAddToWishlist={handleAddToWishlist} onOpenSidebar={toggleSidebar} />
+            } />
+          </Routes>
+          <UserSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} initialWishlistItems={wishlistItems} />
+        </AuthProvider>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }
 
