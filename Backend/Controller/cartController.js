@@ -4,6 +4,8 @@ import { Cart } from "../Models/Cart.model.js";
 import Wishlist from "../Models/Wishlist.model.js";
 export const addToCart = async (req, res) => {
     try {
+        console.log(req.user._id);
+        console.log(req.body);
         const { product, quantity } = req.body;
         const customer = req.user._id;
         const cart = await Cart.findOne({ product, customer });
@@ -18,7 +20,8 @@ export const addToCart = async (req, res) => {
             customer
         });
         await newCart.save();
-        res.json(newCart);
+        console.log(newCart);
+        res.status(200).json(newCart);
     } catch (error) {
         console.log(error);
     }
@@ -39,7 +42,7 @@ export const removeFromCart = async (req, res) => {
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-        await cart.remove();
+        await cart.deleteOne({ _id: req.params.id });
         res.json({ message: "Cart removed" });
     } catch (error) {
         console.log(error);
