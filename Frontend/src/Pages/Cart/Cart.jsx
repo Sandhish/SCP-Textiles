@@ -3,6 +3,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import styles from "./Cart.module.css";
 import CheckoutModal from "../../Components/CheckoutModal/CheckoutModal";
 import axios from "axios";
+import { useCart } from "../../Context/CartContext";
 const Cart = () => {
   // const sampleCartItems = [
   //     {
@@ -44,6 +45,7 @@ const Cart = () => {
   // ];
 
   const [cartItems, setCartItems] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [couponCode, setCouponCode] = useState("");
@@ -53,15 +55,10 @@ const Cart = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        setLoading(true);
-
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
-        console.log(res.data);
 
         const cartData = res.data.map((item) => ({
           id: item._id,
@@ -74,11 +71,8 @@ const Cart = () => {
         }));
 
         setCartItems(cartData);
-        setLoading(false);
       } catch (err) {
-        console.error(err);
-        setError("Failed to fetch cart items");
-        setLoading(false);
+        console.error("Failed to fetch cart:", err);
       }
     };
 
