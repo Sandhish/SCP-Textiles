@@ -3,27 +3,27 @@ import styles from "./Testimonials.module.css"
 const testimonials = [
     {
         id: 1,
-        name: "Sarah Johnson",
+        name: "Bharath Subramanian",
         role: "Interior Designer",
-        image: "/placeholder.svg?height=100&width=100",
+        image: "https://media.architecturaldigest.com/photos/5f241de2c850b2a36b415024/master/w_1600%2Cc_limit/Luke-logo.png",
         content:
             "The quality of these bedsheets is exceptional. My clients are always impressed when I recommend CozyHome products for their bedrooms. The attention to detail and craftsmanship is unmatched.",
         rating: 5,
     },
     {
         id: 2,
-        name: "Michael Chen",
+        name: "Senthil",
         role: "Homeowner",
-        image: "/placeholder.svg?height=100&width=100",
+        image: "https://img.freepik.com/free-vector/man-profile-cartoon_18591-58482.jpg",
         content:
             "I've tried many brands of towels, but these are by far the softest and most absorbent. They still look and feel brand new even after multiple washes. Definitely worth the investment!",
         rating: 5,
     },
     {
         id: 3,
-        name: "Emily Rodriguez",
+        name: "Vidhya",
         role: "Hotel Manager",
-        image: "/placeholder.svg?height=100&width=100",
+        image: "https://th.bing.com/th/id/OIP.-hpx-mg338PW9gkTFw5ZtgHaHa?rs=1&pid=ImgDetMain",
         content:
             "We've switched all our hotel rooms to use CozyHome bedding and towels. Our guests frequently comment on how comfortable they are, and the durability means they're cost-effective for our business.",
         rating: 4,
