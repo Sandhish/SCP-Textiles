@@ -37,11 +37,57 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
         setLoading(false);
       }
     };
+    const fetchWishlist = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist`,
+          { withCredentials: true }
+        );
+        if (response.data && response.data.length > 0) {
+          const wishlistSet = new Set(
+            response.data.map((item) => item.product._id)
+          );
+          console.log(wishlistSet);
 
+          setWishlist(wishlistSet);
+        }
+      } catch (err) {
+        console.error("Error fetching wishlist:", err);
+        // setError("Failed to load wishlist. Please try again later.");
+      }
+    };
+    fetchWishlist();
     fetchFeaturedProducts();
   }, []);
 
-  const toggleWishlist = async (productId) => {};
+  const toggleWishlist = async (productId) => {
+    try {
+      if (wishlist.has(productId)) {
+        console.log("awdiobcsi");
+
+        await axios.delete(
+          `${
+            import.meta.env.VITE_BACKEND_API
+          }/api/productRoutes/wishlist/remove/${productId}`,
+          { withCredentials: true }
+        );
+        setWishlist(
+          (prev) => new Set([...prev].filter((id) => id !== productId))
+        );
+      } else {
+        await axios.post(
+          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/add`,
+          { product: productId },
+          { withCredentials: true }
+        );
+        setWishlist((prev) => new Set(prev).add(productId));
+      }
+      onAddToWishlist && onAddToWishlist(productId);
+    } catch (err) {
+      console.error("Error toggling wishlist:", err);
+      alert("Failed to update wishlist. Please try again later.");
+    }
+  };
 
   const handleAddToCart = async (e, product) => {
     e.preventDefault();

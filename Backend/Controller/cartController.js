@@ -101,11 +101,12 @@ export const getWishlist = async (req, res) => {
 }
 export const removeFromWishlist = async (req, res) => {
     try {
-        const wishlist = await Wishlist.findById(req.params.id);
+        const wishlist = await Wishlist.deleteOne({ product: req.params.id });
         if (!wishlist) {
             return res.status(404).json({ message: "Wishlist not found" });
         }
-        await wishlist.remove();
+        console.log("removed from wishlist");
+
         res.json({ message: "Wishlist removed" });
     } catch (error) {
         console.log(error);
