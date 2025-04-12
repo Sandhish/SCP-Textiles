@@ -13,18 +13,11 @@ import styles from "./Sidebar.module.css";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../Services/authService";
 import axios from "axios";
-const UserSidebar = ({
-  isOpen,
-  onClose,
-  userData,
-  initialWishlistItems = [],
-}) => {
+
+const UserSidebar = ({ isOpen, onClose, userData }) => {
   const [activeView, setActiveView] = useState("profile");
   const [previousView, setPreviousView] = useState(null);
-  const navigate = useNavigate();
-
   const [wishlistItems, setWishlistItems] = useState([]);
-
   const [orderItems, setOrderItems] = useState([
     {
       id: 1,
@@ -49,6 +42,8 @@ const UserSidebar = ({
     },
   ]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
@@ -56,13 +51,14 @@ const UserSidebar = ({
           `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist`,
           { withCredentials: true }
         );
-        if (response.data && response.data.length > 0) {
-          const wishlistSet = new Set(
-            response.data.map((item) => item.product._id)
-          );
-          console.log(wishlistSet);
-
-          setWishlistItems(wishlistSet);
+        if (response.data) {
+          const mapped = response.data.map((item) => ({
+            id: item.product._id,
+            name: item.product.name,
+            price: item.product.price,
+            image: item.product.image,
+          }));
+          setWishlistItems(mapped);
         }
       } catch (err) {
         console.error("Error fetching wishlist:", err);
@@ -108,10 +104,18 @@ const UserSidebar = ({
     },
   ];
 
-  const handleRemoveFromWishlist = (itemId) => {
-    setWishlistItems((currentItems) =>
-      currentItems.filter((item) => item.id !== itemId)
-    );
+  const handleRemoveFromWishlist = async (itemId) => {
+    try {
+      await axios.delete(
+        `${
+          import.meta.env.VITE_BACKEND_API
+        }/api/productRoutes/wishlist/${itemId}`,
+        { withCredentials: true }
+      );
+      setWishlistItems((items) => items.filter((item) => item.id !== itemId));
+    } catch (err) {
+      console.error("Failed to remove from wishlist", err);
+    }
   };
 
   const handleBack = () => {
@@ -208,12 +212,7 @@ const UserSidebar = ({
             </div>
 
             <div className={styles.logoutSection}>
-              <button
-                className={styles.logoutButton}
-                onClick={() => {
-                  handleLogout();
-                }}
-              >
+              <button className={styles.logoutButton} onClick={handleLogout}>
                 <LogOut />
                 <span>Logout</span>
               </button>
@@ -266,8 +265,8 @@ const UserSidebar = ({
                   <div key={item.id} className={styles.wishlistItem}>
                     <div className={styles.wishlistItemImage}>
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={item.image || "/fallback.jpg"}
+                        alt={item.name || "Product"}
                         className={styles.productImage}
                       />
                     </div>
