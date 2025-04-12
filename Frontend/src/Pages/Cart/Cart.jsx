@@ -215,9 +215,6 @@ const Cart = () => {
 
                 <div className={styles.productDetails}>
                   <h3 className={styles.productName}>{item.name}</h3>
-                  <p className={styles.productVariant}>
-                    Color: {item.color} | Size: {item.size}
-                  </p>
                   <div className={styles.priceContainer}>
                     <span className={styles.price}>
                       ₹{item.price.toLocaleString()}
@@ -353,10 +350,9 @@ const Cart = () => {
             </div>
 
             <div className={styles.paymentMethods}>
-              <span>We Accept:</span>
+              <span>We Accept: 💳</span>
               <div className={styles.paymentIcons}>
-                <div className={styles.paymentIcon}>💳</div>
-                <div className={styles.paymentIcon}>💵</div>
+                <div className={styles.paymentIcon}></div>
               </div>
             </div>
           </div>
