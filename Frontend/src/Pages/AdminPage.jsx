@@ -5,14 +5,11 @@ import ProductManagement from './AdminPages/Management/ProductManagement';
 import CouponManagement from './AdminPages/Management/CouponManagement';
 import SendMail from './AdminPages/Management/SendMail';
 import Sidebar from './AdminPages/AdminSidebar/Sidebar';
-import { useNavigate } from 'react-router-dom';
-import { logout } from '../Services/authService';
 
 const AdminPage = () => {
     const [activeContent, setActiveContent] = useState('productUpload');
     const [isSidebarVisible, setIsSidebarVisible] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const handleResize = () => {
@@ -40,8 +37,6 @@ const AdminPage = () => {
                 return <CouponManagement />;
             case 'sendMail':
                 return <SendMail />;
-            case 'logout':
-                return <div>Logging out...</div>;
             default:
                 return <ProductUpload />;
         }
@@ -57,12 +52,6 @@ const AdminPage = () => {
 
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
-    };
-
-    const handleLogout = async () => {
-        localStorage.removeItem('user');
-        await logout();
-        navigate('/login');
     };
 
     const styles = {
@@ -115,7 +104,7 @@ const AdminPage = () => {
             )}
 
             {(isSidebarVisible || !isMobile) && (
-                <Sidebar setActiveContent={handleSidebarItemClick} activeContent={activeContent} isMobile={isMobile} onLogout={handleLogout}/>
+                <Sidebar setActiveContent={handleSidebarItemClick} activeContent={activeContent} isMobile={isMobile} />
             )}
 
             <div style={styles.mainContent}>
