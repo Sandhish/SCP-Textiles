@@ -66,8 +66,7 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
         console.log("awdiobcsi");
 
         await axios.delete(
-          `${
-            import.meta.env.VITE_BACKEND_API
+          `${import.meta.env.VITE_BACKEND_API
           }/api/productRoutes/wishlist/remove/${productId}`,
           { withCredentials: true }
         );
@@ -95,7 +94,15 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
       const result = await axios.post(
         `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart/add`,
         { product: product._id, quantity: 1 },
-        { withCredentials: true }
+        {
+          method: "POST",
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+
+        }
       );
       if (result.status === 200) {
         alert("Product added to cart successfully!");
@@ -169,7 +176,7 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
                         {Math.round(
                           ((product.oldPrice - product.price) /
                             product.oldPrice) *
-                            100
+                          100
                         )}
                         % OFF
                       </span>

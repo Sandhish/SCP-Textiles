@@ -37,7 +37,7 @@ const UserSidebar = ({ isOpen, onClose, userData, initialWishlistItems = [] }) =
 
     useEffect(() => {
         setWishlistItems(initialWishlistItems);
-    }, [initialWishlistItems]);
+    }, []);
 
     const menuItems = [
         {
