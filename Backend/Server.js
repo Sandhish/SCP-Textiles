@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 app.use(cors({
     origin: ["http://localhost:5173", "https://scp-textiles.vercel.app"],
