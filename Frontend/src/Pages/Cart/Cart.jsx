@@ -5,6 +5,45 @@ import CheckoutModal from "../../Components/CheckoutModal/CheckoutModal";
 import axios from "axios";
 import { useCart } from "../../Context/CartContext";
 const Cart = () => {
+  // const sampleCartItems = [
+  //     {
+  //         id: 1,
+  //         name: 'Luxury Cotton Bedsheet',
+  //         image: 'https://pepsdreamdecor.in/pepsadmin/pepsindia/public/storage/products/August2021/harmonize%20folded%20double%20bedsheets%20blush%20pink%20zig%20zag.jpg',
+  //         price: 1499,
+  //         quantity: 1,
+  //         color: 'White',
+  //         size: 'King'
+  //     },
+  //     {
+  //         id: 2,
+  //         name: 'Soft Microfiber Floor Mat',
+  //         image: 'https://5.imimg.com/data5/GR/UY/MY-24014740/floor-mat-1000x1000.jpg',
+  //         price: 599,
+  //         quantity: 2,
+  //         color: 'Gray',
+  //         size: 'Medium'
+  //     },
+  //     {
+  //         id: 3,
+  //         name: 'Premium Cotton Towel Set',
+  //         image: 'https://th.bing.com/th/id/OIP.VefLND7RJ6jwnPxoRr5aZAAAAA?rs=1&pid=ImgDetMain',
+  //         price: 799,
+  //         quantity: 1,
+  //         color: 'Blue',
+  //         size: '4-Piece Set'
+  //     },
+  //     {
+  //         id: 4,
+  //         name: 'Soft Pillow Cover',
+  //         image: 'https://th.bing.com/th/id/OIP.xVPQjbZiZBim3kdcWF6p_gHaHa?pid=ImgDet&w=474&h=474&rs=1',
+  //         price: 299,
+  //         quantity: 3,
+  //         color: 'Beige',
+  //         size: 'Standard'
+  //     }
+  // ];
+
   const [cartItems, setCartItems] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -18,10 +57,7 @@ const Cart = () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart`,
-          {
-            withCredentials: true,
-            headers: { "Content-Type": "application/json" },
-          }
+          { withCredentials: true, }
         );
 
         const cartData = res.data.map((item) => ({
