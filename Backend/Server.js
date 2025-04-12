@@ -12,18 +12,19 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
     cors({
-      origin: "http://localhost:5173",
-      methods: ["GET", "POST", "DELETE", "PUT"],
-      allowedHeaders: [
-        "Content-Type",
-        "Authorization",
-        "Cache-Control",
-        "Expires",
-        "Pragma",
-      ],
-      credentials: true,
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST", "DELETE", "PUT"],
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization",
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Headers",
+            "Access-Control-Allow-Credentials",
+            
+        ],
+        credentials: true,
     })
-  );
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
