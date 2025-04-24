@@ -146,11 +146,6 @@
     color: #333;
   }
   
-  .productDescription {
-    color: #666;
-    margin-bottom: 1rem;
-  }
-  
   .priceContainer {
     display: flex;
     justify-content: space-between;

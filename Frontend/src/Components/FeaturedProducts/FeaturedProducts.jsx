@@ -1,13 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  FaHeart,
-  FaRegHeart,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import styles from "./FeaturedProducts.module.css";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const FeaturedProducts = ({ onAddToWishlist }) => {
   const [wishlist, setWishlist] = useState(new Set());
@@ -37,6 +33,7 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
         setLoading(false);
       }
     };
+
     const fetchWishlist = async () => {
       try {
         const response = await axios.get(
@@ -53,26 +50,23 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
         }
       } catch (err) {
         console.error("Error fetching wishlist:", err);
-        // setError("Failed to load wishlist. Please try again later.");
       }
     };
     fetchWishlist();
     fetchFeaturedProducts();
   }, []);
 
-  const toggleWishlist = async (productId) => {
+  const toggleWishlist = async (productId, productName) => {
     try {
       if (wishlist.has(productId)) {
-        console.log("awdiobcsi");
-
         await axios.delete(
-          `${import.meta.env.VITE_BACKEND_API
-          }/api/productRoutes/wishlist/remove/${productId}`,
+          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/remove/${productId}`,
           { withCredentials: true }
         );
         setWishlist(
           (prev) => new Set([...prev].filter((id) => id !== productId))
         );
+        toast.error(`Removed from wishlist`);
       } else {
         await axios.post(
           `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/add`,
@@ -80,11 +74,12 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
           { withCredentials: true }
         );
         setWishlist((prev) => new Set(prev).add(productId));
+        toast.success(`Added to wishlist`);
       }
       onAddToWishlist && onAddToWishlist(productId);
     } catch (err) {
       console.error("Error toggling wishlist:", err);
-      alert("Failed to update wishlist. Please try again later.");
+      toast.error("Failed to update wishlist. Please try again later.");
     }
   };
 
@@ -101,17 +96,16 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
           },
-
         }
       );
       if (result.status === 200) {
-        alert("Product added to cart successfully!");
+        toast.success(`Added to cart!`);
       } else {
-        alert("Failed to add product to cart. Please try again later.");
+        toast.error("Failed to add product to cart.");
       }
     } catch (err) {
       console.error("Error adding product to cart:", err);
-      alert("Failed to add product to cart. Please try again later.");
+      toast.error("Failed to add product to cart. Please try again later.");
     }
   };
 
@@ -150,42 +144,21 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
         </div>
 
         <div className={styles.scrollWrapper}>
-          <button
-            className={`${styles.scrollButton} ${styles.scrollLeft}`}
-            onClick={scrollLeft}
-          >
+          <button className={`${styles.scrollButton} ${styles.scrollLeft}`} onClick={scrollLeft} >
             <FaChevronLeft />
           </button>
-          <button
-            className={`${styles.scrollButton} ${styles.scrollRight}`}
-            onClick={scrollRight}
-          >
+          <button className={`${styles.scrollButton} ${styles.scrollRight}`} onClick={scrollRight} >
             <FaChevronRight />
           </button>
           <div ref={scrollContainerRef} className={styles.scrollContainer}>
             <div className={styles.grid}>
               {products.map((product) => (
-                <Link
-                  to={`/product/${product._id}`}
-                  key={product._id}
-                  className={styles.product}
-                >
+                <Link to={`/product/${product._id}`} key={product._id} className={styles.product} >
                   <div className={styles.imageContainer}>
-                    {product.oldPrice && (
-                      <span className={styles.discount}>
-                        {Math.round(
-                          ((product.oldPrice - product.price) /
-                            product.oldPrice) *
-                          100
-                        )}
-                        % OFF
-                      </span>
-                    )}
-                    <button
-                      className={styles.wishlistButton}
+                    <button className={styles.wishlistButton}
                       onClick={(e) => {
                         e.preventDefault();
-                        toggleWishlist(product._id);
+                        toggleWishlist(product._id, product.name);
                       }}
                     >
                       {wishlist.has(product._id) ? (
@@ -194,32 +167,14 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
                         <FaRegHeart className={styles.wishlistIcon} />
                       )}
                     </button>
-                    <img
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      className={styles.image}
-                    />
+                    <img src={product.image || "/placeholder.svg"} alt={product.name} className={styles.image} />
                   </div>
                   <div className={styles.content}>
-                    <span className={styles.category}>{product.tag}</span>
                     <div className={styles.name}>{product.name}</div>
                     <div className={styles.rating}>
                       {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          className={styles.stars}
-                          fill={
-                            i < Math.floor(product.rating || 0)
-                              ? "currentColor"
-                              : "none"
-                          }
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
+                        <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" className={styles.stars}
+                          fill={i < Math.floor(product.rating || 0) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
                           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                         </svg>
                       ))}
@@ -235,11 +190,7 @@ const FeaturedProducts = ({ onAddToWishlist }) => {
                         </span>
                       )}
                     </div>
-                    <button
-                      className={styles.addToCart}
-                      onClick={(e) => handleAddToCart(e, product)}
-                      disabled={product.quantity <= 0}
-                    >
+                    <button className={styles.addToCart} onClick={(e) => handleAddToCart(e, product)} disabled={product.quantity <= 0} >
                       {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
                     </button>
                   </div>

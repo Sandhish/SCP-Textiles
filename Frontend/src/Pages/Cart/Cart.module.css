@@ -5,6 +5,24 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: #4b5563;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.backButton:hover {
+  color: var(--button-color);
+}
+
 .cartHeader {
   margin-bottom: 30px;
   border-bottom: 1px solid #eaeaea;

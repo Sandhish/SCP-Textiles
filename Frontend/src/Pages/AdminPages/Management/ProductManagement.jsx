@@ -148,7 +148,7 @@ const ProductManagement = () => {
                                 <option value="bedsheet">bedsheet</option>
                                 <option value="floor mat">floor mat</option>
                                 <option value="towel">towel</option>
-                                <option value="pillow cover">pillow cover</option>
+                                <option value="pillowcover">pillow cover</option>
                                 <option value="featured">featured</option>
                             </select>
                         </div>

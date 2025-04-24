@@ -25,6 +25,10 @@ const ProductSchema = new Schema({
         type: String,
         required: true
     },
+    rating: {
+        type: Number,
+        default: 0
+    },
     review: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "CustomerReview"

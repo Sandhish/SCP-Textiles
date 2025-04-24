@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  UserRound,
-  ShoppingBag,
-  Heart,
-  Settings,
-  HelpCircle,
-  LogOut,
-  ChevronRight,
-  X,
-} from "lucide-react";
+import { ShoppingBag, Heart, Settings, HelpCircle, LogOut, ChevronRight, X, } from "lucide-react";
 import styles from "./Sidebar.module.css";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../Services/authService";
@@ -107,9 +98,7 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
   const handleRemoveFromWishlist = async (itemId) => {
     try {
       await axios.delete(
-        `${
-          import.meta.env.VITE_BACKEND_API
-        }/api/productRoutes/wishlist/${itemId}`,
+        `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/remove/${itemId}`,
         { withCredentials: true }
       );
       setWishlistItems((items) => items.filter((item) => item.id !== itemId));
@@ -158,8 +147,8 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
               {activeView === "orders"
                 ? "My Orders"
                 : activeView === "wishlist"
-                ? "Wishlist"
-                : "Account Settings"}
+                  ? "Wishlist"
+                  : "Account Settings"}
             </h2>
             <button onClick={onClose} className={styles.closeButton}>
               <X size={24} />
@@ -200,11 +189,7 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
 
             <div className={styles.sidebarMenu}>
               {menuItems.map((item) => (
-                <button
-                  key={item.view}
-                  className={styles.menuItem}
-                  onClick={item.action}
-                >
+                <button key={item.view} className={styles.menuItem} onClick={item.action}>
                   {item.icon}
                   <span>{item.label}</span>
                 </button>
@@ -264,11 +249,7 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
                 {wishlistItems.map((item) => (
                   <div key={item.id} className={styles.wishlistItem}>
                     <div className={styles.wishlistItemImage}>
-                      <img
-                        src={item.image || "/fallback.jpg"}
-                        alt={item.name || "Product"}
-                        className={styles.productImage}
-                      />
+                      <img src={item.image || "/fallback.jpg"} alt={item.name || "Product"} className={styles.productImage} />
                     </div>
                     <div className={styles.itemDetails}>
                       <span className={styles.productName}>{item.name}</span>
@@ -277,10 +258,7 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
                       </span>
                     </div>
                     <div className={styles.wishlistActions}>
-                      <button
-                        className={styles.removeFromWishlist}
-                        onClick={() => handleRemoveFromWishlist(item.id)}
-                      >
+                      <button className={styles.removeFromWishlist} onClick={() => handleRemoveFromWishlist(item.id)} >
                         <Heart size={20} fill="currentColor" color="red" />
                       </button>
                     </div>
@@ -305,10 +283,7 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
                   <span>Edit Profile</span>
                   <ChevronRight size={20} />
                 </div>
-                <div
-                  onClick={() => navigate("/forgot-password")}
-                  className={styles.settingItem}
-                >
+                <div onClick={() => navigate("/forgot-password")} className={styles.settingItem} >
                   <span>Change Password</span>
                   <ChevronRight size={20} />
                 </div>

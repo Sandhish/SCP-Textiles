@@ -24,7 +24,7 @@ const ToastProvider = ({ children }) => {
                     },
                     error: {
                         style: {
-                            background: '#EF4444',
+                            background: 'rgb(255, 80, 80)',
                         },
                     },
                 }}

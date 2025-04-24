@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Sidebar.module.css';
 
-const Sidebar = ({ setActiveContent, activeContent, isMobile }) => {
+const Sidebar = ({ setActiveContent, activeContent, isMobile, onLogout }) => {
     const menuItems = [
         {
             id: 'productUpload',
@@ -27,6 +27,11 @@ const Sidebar = ({ setActiveContent, activeContent, isMobile }) => {
             id: 'sendMail',
             label: 'Send Mail',
             icon: '✉️'
+        },
+        {
+            id: 'logout',
+            label: 'Logout',
+            icon: '🔚'
         }
     ];
 
@@ -39,7 +44,13 @@ const Sidebar = ({ setActiveContent, activeContent, isMobile }) => {
                 {menuItems.map((item) => (
                     <button key={item.id}
                         className={`${styles.menuItem} ${activeContent === item.id ? styles.active : ''}`}
-                        onClick={() => setActiveContent(item.id)}
+                        onClick={() => {
+                            if (item.id === 'logout') {
+                                onLogout();
+                            } else {
+                                setActiveContent(item.id);
+                            }
+                        }}
                     >
                         <span className={styles.menuIcon}>{item.icon}</span>
                         <span className={styles.menuLabel}>{item.label}</span>
