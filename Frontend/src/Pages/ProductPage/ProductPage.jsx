@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaArrowLeft,
-  FaHeart,
-  FaRegHeart,
-  FaStar,
-  FaRegStar,
-} from "react-icons/fa";
+import { FaArrowLeft, FaHeart, FaRegHeart, FaStar, FaRegStar } from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
 import { HiMinus } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import styles from "./ProductPage.module.css";
+import { toast } from "react-hot-toast";
 
 const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
   const navigate = useNavigate();
@@ -77,12 +72,11 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
     try {
       if (isInWishlist) {
         await axios.delete(
-          `${
-            import.meta.env.VITE_BACKEND_API
-          }/api/productRoutes/wishlist/remove/${id}`,
+          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/remove/${id}`,
           { withCredentials: true }
         );
         setIsInWishlist(false);
+        toast.error("Removed from wishlist");
       } else {
         await axios.post(
           `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/add`,
@@ -90,6 +84,7 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
           { withCredentials: true }
         );
         setIsInWishlist(true);
+        toast.success("Added to wishlist");
       }
 
       if (onAddToWishlist) {
@@ -97,7 +92,7 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
       }
     } catch (err) {
       console.error("Error updating wishlist:", err);
-      alert("Please login to modify wishlist.");
+      toast.error("Please login to modify wishlist.");
       navigate("/login");
     }
   };
@@ -112,10 +107,10 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
         },
         { withCredentials: true }
       );
-      alert("Product added to cart!");
+      toast.success("Product added to cart!");
     } catch (err) {
       console.error("Error adding to cart:", err);
-      alert("Please login to add to cart.");
+      toast.error("Please login to add to cart.");
       navigate("/login");
     }
   };
@@ -176,7 +171,7 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
               {renderStars(
                 product.review && product.review.length > 0
                   ? product.review.reduce((avg, r) => avg + r.rating, 0) /
-                      product.review.length
+                  product.review.length
                   : 0
               )}
             </div>
@@ -189,34 +184,27 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
             <span className={styles.currentPrice}>Rs.{product.price}.00</span>
           </div>
 
-          <p className={styles.productDescription}>
-            {product.description || "No description available."}
-          </p>
+          <div className={styles.productDescription}>
+            {(product.description || "No description available.")
+              .split(/(?=Set content:|Material:|Dimension:|Features:|Care:)/)
+              .map((line, index) => (
+                <p key={index}>{line.trim()}</p>
+              ))}
+          </div>
+
 
           <div className={styles.actionContainer}>
             <div className={styles.quantityControls}>
-              <button
-                className={styles.quantityButton}
-                onClick={decrement}
-                disabled={count <= 1}
-              >
+              <button className={styles.quantityButton} onClick={decrement} disabled={count <= 1} >
                 <HiMinus />
               </button>
               <span className={styles.quantityDisplay}>{count}</span>
-              <button
-                className={styles.quantityButton}
-                onClick={increment}
-                disabled={count >= product.quantity}
-              >
+              <button className={styles.quantityButton} onClick={increment} disabled={count >= product.quantity}>
                 <GoPlus />
               </button>
             </div>
 
-            <button
-              className={styles.addToCartButton}
-              disabled={product.quantity <= 0}
-              onClick={handleAddToCart}
-            >
+            <button className={styles.addToCartButton} disabled={product.quantity <= 0} onClick={handleAddToCart} >
               {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
             </button>
           </div>

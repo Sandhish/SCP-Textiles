@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Edit, Trash2, X } from 'lucide-react';
+import { Edit, Trash2, X, Upload, Filter } from 'lucide-react';
 import styles from './Management.module.css';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 const ProductManagement = () => {
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentProduct, setCurrentProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
+    const [selectedTag, setSelectedTag] = useState('all');
+
+    const tags = ['all', 'bedsheet', 'floormat', 'towel', 'pillowcover', 'featured'];
 
     const fetchProducts = async () => {
         setLoading(true);
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/products`);
             setProducts(response.data);
+            setFilteredProducts(response.data);
         } catch (error) {
             console.error('Error fetching products:', error);
-            toast.error('Failed to load products. Please try again.', {
-                position: 'top-center',
-                duration: 3000
-            });
+            toast.error('Failed to load products. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -30,22 +34,64 @@ const ProductManagement = () => {
         fetchProducts();
     }, []);
 
+    useEffect(() => {
+        if (selectedTag === 'all') {
+            setFilteredProducts(products);
+        } else {
+            setFilteredProducts(products.filter(product => product.tag === selectedTag));
+        }
+    }, [selectedTag, products]);
+
+    const handleTagChange = (tag) => {
+        setSelectedTag(tag);
+    };
+
     const handleEditProduct = (product) => {
         setCurrentProduct({ ...product });
+        setImagePreview(product.image || '');
         setIsModalOpen(true);
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleSaveProduct = async (e) => {
         e.preventDefault();
 
         try {
-            const updatedData = {
+            let updatedData = {
                 name: currentProduct.name,
                 price: currentProduct.price,
                 quantity: currentProduct.quantity,
                 description: currentProduct.description,
                 tag: currentProduct.tag
             };
+
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append('image', imageFile);
+
+                const imageResponse = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/upload-image/${currentProduct._id}`,
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
+                );
+
+                updatedData.image = imageResponse.data.imageUrl;
+            }
 
             const response = await axios.put(
                 `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/update/${currentProduct._id}`,
@@ -56,41 +102,26 @@ const ProductManagement = () => {
                 prev.map(p => p._id === currentProduct._id ? response.data : p)
             );
 
-            toast.success('Product updated successfully!', {
-                position: 'top-center',
-                duration: 3000
-            });
+            toast.success('Product updated successfully!');
 
             setIsModalOpen(false);
             setCurrentProduct(null);
+            setImageFile(null);
+            setImagePreview('');
         } catch (error) {
             console.error('Error saving product:', error);
-            toast.error(
-                error.response?.data?.message || 'Failed to save product. Please try again.',
-                {
-                    position: 'top-center',
-                    duration: 3000
-                }
-            );
+            toast.error('Failed to save product. Please try again.');
         }
     };
 
     const handleDeleteProduct = async (id) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            try {
-                await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/delete/${id}`);
-                setProducts(prev => prev.filter(p => p._id !== id));
-                toast.success('Product deleted successfully!', {
-                    position: 'top-center',
-                    duration: 3000
-                });
-            } catch (error) {
-                console.error('Error deleting product:', error);
-                toast.error('Failed to delete product. Please try again.', {
-                    position: 'top-center',
-                    duration: 3000
-                });
-            }
+        try {
+            await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/delete/${id}`);
+            setProducts(prev => prev.filter(p => p._id !== id));
+            toast.success('Product deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            toast.error('Failed to delete product. Please try again.');
         }
     };
 
@@ -103,6 +134,8 @@ const ProductManagement = () => {
                     <button onClick={() => {
                         setIsModalOpen(false);
                         setCurrentProduct(null);
+                        setImageFile(null);
+                        setImagePreview('');
                     }}
                         className={styles.modalCloseButton} >
                         <X size={24} />
@@ -117,6 +150,24 @@ const ProductManagement = () => {
                                     name: e.target.value
                                 }))}
                                 required />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label className={styles.formLabel}>Product Image</label>
+                            <div className={styles.imageUploadContainer}>
+                                {imagePreview && (
+                                    <div className={styles.imagePreviewWrapper}>
+                                        <img src={imagePreview} alt="Product preview" className={styles.imagePreview} />
+                                    </div>
+                                )}
+                                <div className={styles.uploadButtonWrapper}>
+                                    <label className={styles.uploadButton}>
+                                        <Upload size={18} className={styles.uploadIcon} />
+                                        <span>Choose Image</span>
+                                        <input type="file" accept="image/*" className={styles.fileInput} onChange={handleImageChange} />
+                                    </label>
+                                    {imageFile && <span className={styles.fileName}>{imageFile.name}</span>}
+                                </div>
+                            </div>
                         </div>
                         <div className={styles.formGroup}>
                             <label className={styles.formLabel}>Price</label>
@@ -146,9 +197,9 @@ const ProductManagement = () => {
                                 required>
                                 <option value="">Select a Tag</option>
                                 <option value="bedsheet">bedsheet</option>
-                                <option value="floor mat">floor mat</option>
+                                <option value="floormat">floor mat</option>
                                 <option value="towel">towel</option>
-                                <option value="pillow cover">pillow cover</option>
+                                <option value="pillowcover">pillow cover</option>
                                 <option value="featured">featured</option>
                             </select>
                         </div>
@@ -161,6 +212,7 @@ const ProductManagement = () => {
                                 }))}
                                 required />
                         </div>
+
                         <button type="submit" className={styles.formSubmitButton}>Update Product</button>
                     </form>
                 </div>
@@ -172,14 +224,28 @@ const ProductManagement = () => {
         <div className={styles.managementContainer}>
             <div className={styles.pageHeader}>
                 <h2 className={styles.pageTitle}>Product Management</h2>
+                <div className={styles.filterContainer}>
+                    <Filter size={18} className={styles.filterIcon} />
+                    <select
+                        className={styles.tagFilter}
+                        value={selectedTag}
+                        onChange={(e) => handleTagChange(e.target.value)}
+                    >
+                        {tags.map(tag => (
+                            <option key={tag} value={tag}>
+                                {tag === 'all' ? 'All Products' : tag.charAt(0).toUpperCase() + tag.slice(1)}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {loading ? (
                 <div className={styles.loading}>Loading products...</div>
             ) : (
                 <div className={styles.dataTable}>
-                    {products.length === 0 ? (
-                        <p className={styles.noData}>No products found.</p>
+                    {filteredProducts.length === 0 ? (
+                        <p className={styles.noData}>No products found for the selected tag.</p>
                     ) : (
                         <table>
                             <thead>
@@ -194,16 +260,12 @@ const ProductManagement = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {products.map(product => (
+                                {filteredProducts.map(product => (
                                     <tr key={product._id}>
                                         <td>{product._id.substring(0, 8)}...</td>
                                         <td>
                                             {product.image && (
-                                                <img
-                                                    src={product.image}
-                                                    alt={product.name}
-                                                    className={styles.thumbnailImage}
-                                                />
+                                                <img src={product.image} alt={product.name} className={styles.thumbnailImage} />
                                             )}
                                         </td>
                                         <td>{product.name}</td>

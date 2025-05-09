@@ -111,14 +111,40 @@ export const updateProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
+
         product.name = req.body.name || product.name;
         product.price = req.body.price || product.price;
         product.quantity = req.body.quantity || product.quantity;
         product.description = req.body.description || product.description;
         product.tag = req.body.tag || product.tag;
 
+        if (req.body.image) {
+            product.image = req.body.image;
+        }
+
         await product.save();
         res.json(product);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+export const uploadProductImage = async (req, res) => {
+    try {
+        const file = req.file;
+        if (!file) {
+            return res.status(400).json({ message: "Please upload a file" });
+        }
+
+        const product = await Product.findById(req.params.id);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        const imageLink = await getImageLink(file);
+
+        res.json({ imageUrl: imageLink });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Server error" });

@@ -23,6 +23,46 @@
     margin: 0;
 }
 
+.filterContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.filterContainer:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.filterIcon {
+    color: #64748b;
+}
+
+.tagFilter {
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    min-width: 150px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 30px;
+}
+
+.tagFilter:focus {
+    outline: none;
+}
+
 .message {
     width: 100%;
     max-width: 1200px;
@@ -124,6 +164,10 @@
     display: flex;
     gap: 10px;
     margin-top: 15px;
+}
+
+.uploadIcon{
+    margin-right: 6px;
 }
 
 .actionButton {
@@ -236,7 +280,7 @@
     width: 100%;
     padding: 12px 16px;
     border: 1px solid #e2e8f0;
-    border-radius: a8px;
+    border-radius: 8px;
     font-size: 1rem;
     transition: all 0.2s ease;
     background-color: #f8fafc;
@@ -301,11 +345,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.fileInput {
-    display: none;
-}
-
-.fileInputLabel {
+.uploadButton {
     background-color: #3b82f6;
     color: white;
     padding: 10px 20px;
@@ -318,8 +358,24 @@
     font-weight: 500;
 }
 
-.fileInputLabel:hover {
+.uploadButton:hover {
     background-color: #2563eb;
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
+
+.fileInput {
+    display: none;
+}
+
+.uploadButtonWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.fileName {
+    font-size: 0.85rem;
+    color: #64748b;
 }

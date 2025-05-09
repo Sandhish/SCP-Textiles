@@ -15,7 +15,7 @@ const ProductUpload = () => {
     const [loading, setLoading] = useState(false);
 
     const fileInputRef = useRef(null);
-    const tags = ['bedsheet', 'floor mat', 'towel', 'pillow cover', 'featured'];
+    const tags = ['bedsheet', 'floormat', 'towel', 'pillowcover', 'featured'];
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

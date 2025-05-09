@@ -90,19 +90,6 @@
     transform: scale(1.05);
 }
 
-.discount {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #e74c3c;
-    color: white;
-    padding: 5px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 4px;
-    z-index: 1;
-}
-
 .actions {
     position: absolute;
     top: 10px;

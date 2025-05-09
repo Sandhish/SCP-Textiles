@@ -1,56 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart, FaArrowLeft } from "react-icons/fa";
 import styles from "./Cart.module.css";
 import CheckoutModal from "../../Components/CheckoutModal/CheckoutModal";
 import axios from "axios";
-import { useCart } from "../../Context/CartContext";
-const Cart = () => {
-  // const sampleCartItems = [
-  //     {
-  //         id: 1,
-  //         name: 'Luxury Cotton Bedsheet',
-  //         image: 'https://pepsdreamdecor.in/pepsadmin/pepsindia/public/storage/products/August2021/harmonize%20folded%20double%20bedsheets%20blush%20pink%20zig%20zag.jpg',
-  //         price: 1499,
-  //         quantity: 1,
-  //         color: 'White',
-  //         size: 'King'
-  //     },
-  //     {
-  //         id: 2,
-  //         name: 'Soft Microfiber Floor Mat',
-  //         image: 'https://5.imimg.com/data5/GR/UY/MY-24014740/floor-mat-1000x1000.jpg',
-  //         price: 599,
-  //         quantity: 2,
-  //         color: 'Gray',
-  //         size: 'Medium'
-  //     },
-  //     {
-  //         id: 3,
-  //         name: 'Premium Cotton Towel Set',
-  //         image: 'https://th.bing.com/th/id/OIP.VefLND7RJ6jwnPxoRr5aZAAAAA?rs=1&pid=ImgDetMain',
-  //         price: 799,
-  //         quantity: 1,
-  //         color: 'Blue',
-  //         size: '4-Piece Set'
-  //     },
-  //     {
-  //         id: 4,
-  //         name: 'Soft Pillow Cover',
-  //         image: 'https://th.bing.com/th/id/OIP.xVPQjbZiZBim3kdcWF6p_gHaHa?pid=ImgDet&w=474&h=474&rs=1',
-  //         price: 299,
-  //         quantity: 3,
-  //         color: 'Beige',
-  //         size: 'Standard'
-  //     }
-  // ];
+import { useNavigate } from "react-router-dom";
+// import { useCart } from "../../Context/CartContext";
 
+const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [couponDiscount, setCouponDiscount] = useState(0);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -79,15 +44,15 @@ const Cart = () => {
     fetchCartItems();
   }, []);
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const calculateSubtotal = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
-  };
-
-  const calculateDiscount = () => {
-    return couponApplied ? calculateSubtotal() * 0.1 : 0;
   };
 
   const calculateTax = () => {
@@ -114,10 +79,7 @@ const Cart = () => {
 
   const removeItem = async (itemId) => {
     try {
-      const result = await axios.delete(
-        `${import.meta.env.VITE_BACKEND_API
-        }/api/productRoutes/cart/remove/${itemId}`
-      );
+      const result = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart/remove/${itemId}`);
       console.log(result.data);
       setCartItems((prevItems) =>
         prevItems.filter((item) => item.id !== itemId)
@@ -127,26 +89,46 @@ const Cart = () => {
     }
   };
 
-  const applyCoupon = () => {
+  const applyCoupon = async () => {
     if (!couponCode.trim()) {
       setError("Please enter a coupon code");
       return;
     }
 
     try {
-      const validCoupons = ["SAVE10", "WELCOME20", "DISCOUNT"];
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/coupon/validate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ code: couponCode }),
+      });
 
-      if (validCoupons.includes(couponCode.toUpperCase())) {
+      const data = await response.json();
+
+      if (response.ok && data.valid) {
         setCouponApplied(true);
+        setCouponDiscount(data.discount);
         setError(null);
+        console.log("Coupon valid! Discount:", data.discount);
       } else {
         setCouponApplied(false);
-        setError("Invalid coupon code");
+        setCouponDiscount(0);
+        setError(data.message || "Invalid coupon code");
       }
     } catch (err) {
-      setError("Invalid coupon code");
+      console.error(err);
+      setCouponApplied(false);
+      setCouponDiscount(0);
+      setError("Something went wrong. Try again.");
     }
   };
+
+  const calculateDiscount = () => {
+    return couponApplied ? calculateSubtotal() * (couponDiscount / 100) : 0;
+  };
+
 
   const proceedToCheckout = () => {
     setIsCheckoutModalOpen(true);
@@ -154,6 +136,16 @@ const Cart = () => {
 
   const closeCheckoutModal = () => {
     setIsCheckoutModalOpen(false);
+  };
+
+  const clearCart = async () => {
+    try {
+      const result = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart/clear`);
+      console.log(result.data);
+      setCartItems([]);
+    } catch (err) {
+      setError("Failed to clear cart");
+    }
   };
 
   if (loading) {
@@ -169,10 +161,7 @@ const Cart = () => {
     return (
       <div className={styles.errorContainer}>
         <p>Error: {error}</p>
-        <button
-          className={styles.retryButton}
-          onClick={() => window.location.reload()}
-        >
+        <button className={styles.retryButton} onClick={() => window.location.reload()} >
           Retry
         </button>
       </div>
@@ -187,10 +176,7 @@ const Cart = () => {
         </div>
         <h2>Your cart is empty!</h2>
         <p>Looks like you haven't added anything to your cart yet.</p>
-        <button
-          className={styles.continueShopping}
-          onClick={() => (window.location.href = "/")}
-        >
+        <button className={styles.continueShopping} onClick={() => (window.location.href = "/")} >
           Continue Shopping
         </button>
       </div>
@@ -200,6 +186,10 @@ const Cart = () => {
   return (
     <>
       <div className={styles.cartContainer}>
+        <button onClick={handleBack} className={styles.backButton}>
+          <FaArrowLeft />
+          <span>Back</span>
+        </button>
         <div className={styles.cartHeader}>
           <h1>Shopping Cart ({cartItems.length} items)</h1>
         </div>
@@ -222,32 +212,17 @@ const Cart = () => {
                 </div>
 
                 <div className={styles.quantityControls}>
-                  <button
-                    className={styles.quantityButton}
-                    disabled={item.quantity <= 1}
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                  >
+                  <button className={styles.quantityButton} disabled={item.quantity <= 1} onClick={() => updateQuantity(item.id, item.quantity - 1)} >
                     -
                   </button>
-                  <input
-                    type="text"
-                    className={styles.quantityInput}
-                    value={item.quantity}
-                    readOnly
-                  />
-                  <button
-                    className={styles.quantityButton}
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                  >
+                  <input type="text" className={styles.quantityInput} value={item.quantity} readOnly />
+                  <button className={styles.quantityButton} onClick={() => updateQuantity(item.id, item.quantity + 1)} >
                     +
                   </button>
                 </div>
 
                 <div className={styles.itemActions}>
-                  <button
-                    className={styles.removeButton}
-                    onClick={() => removeItem(item.id)}
-                  >
+                  <button className={styles.removeButton} onClick={() => removeItem(item.id)} >
                     Remove
                   </button>
                 </div>
@@ -255,16 +230,10 @@ const Cart = () => {
             ))}
 
             <div className={styles.cartActions}>
-              <button
-                className={styles.continueShoppingButton}
-                onClick={() => (window.location.href = "/")}
-              >
+              <button className={styles.continueShoppingButton} onClick={() => (window.location.href = "/")} >
                 Continue Shopping
               </button>
-              <button
-                className={styles.clearCartButton}
-                onClick={() => setCartItems([])}
-              >
+              <button className={styles.clearCartButton} onClick={clearCart} >
                 Clear Cart
               </button>
             </div>
@@ -275,16 +244,9 @@ const Cart = () => {
 
             <div className={styles.couponSection}>
               <div className={styles.couponInput}>
-                <input
-                  type="text"
-                  placeholder="Enter Coupon Code"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                />
-                <button
-                  className={styles.applyCouponButton}
-                  onClick={applyCoupon}
-                >
+                <input type="text" placeholder="Enter Coupon Code" value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)} />
+                <button className={styles.applyCouponButton} onClick={applyCoupon} >
                   Apply
                 </button>
               </div>
@@ -330,16 +292,12 @@ const Cart = () => {
 
               <div className={styles.savingsRow}>
                 <span>
-                  You will save ₹{calculateDiscount().toLocaleString()} on this
-                  order
+                  You will save ₹{calculateDiscount().toLocaleString()} on this order
                 </span>
               </div>
             </div>
 
-            <button
-              className={styles.checkoutButton}
-              onClick={proceedToCheckout}
-            >
+            <button className={styles.checkoutButton} onClick={proceedToCheckout} >
               Proceed to Checkout
             </button>
 
@@ -358,10 +316,7 @@ const Cart = () => {
         </div>
       </div>
 
-      <CheckoutModal
-        isOpen={isCheckoutModalOpen}
-        onClose={closeCheckoutModal}
-        finalTotal={calculateTotal()}
+      <CheckoutModal isOpen={isCheckoutModalOpen} onClose={closeCheckoutModal} finalTotal={calculateTotal()}
         onSubmit={() => {
           closeCheckoutModal();
         }}

@@ -10,7 +10,7 @@ export const CartProvider = ({ children }) => {
     const fetchCartItems = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart`,
+          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart/clear`,
           { withCredentials: true }
         );
 

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import styles from "./ProductList.module.css";
 import { FaHeart, FaRegHeart, FaArrowLeft } from "react-icons/fa";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
   const { category } = useParams();
@@ -59,7 +60,6 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
         }
       } catch (err) {
         console.error("Error fetching wishlist:", err);
-        // setError("Failed to load wishlist. Please try again later.");
       }
     };
     fetchWishlist();
@@ -75,29 +75,27 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
         { withCredentials: true }
       );
       if (result.status === 200) {
-        alert("Product added to cart successfully!");
+        toast.success("Added to cart!");
       } else {
-        alert("Failed to add product to cart. Please try again later.");
+        toast.error("Failed to add product to cart.");
       }
     } catch (err) {
       console.error("Error adding product to cart:", err);
-      alert("Failed to add product to cart. Please try again later.");
+      toast.error("Failed to add product to cart. Please try again later.");
     }
   };
+
   const toggleWishlist = async (productId) => {
     try {
       if (wishlist.has(productId)) {
-        console.log("awdiobcsi");
-
         await axios.delete(
-          `${
-            import.meta.env.VITE_BACKEND_API
-          }/api/productRoutes/wishlist/remove/${productId}`,
+          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/remove/${productId}`,
           { withCredentials: true }
         );
         setWishlist(
           (prev) => new Set([...prev].filter((id) => id !== productId))
         );
+        toast.error("Removed from wishlist");
       } else {
         await axios.post(
           `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/add`,
@@ -105,11 +103,12 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
           { withCredentials: true }
         );
         setWishlist((prev) => new Set(prev).add(productId));
+        toast.success("Added to wishlist");
       }
       onAddToWishlist && onAddToWishlist(productId);
     } catch (err) {
       console.error("Error toggling wishlist:", err);
-      alert("Failed to update wishlist. Please try again later.");
+      toast.error("Failed to update wishlist. Please try again later.");
     }
   };
 
@@ -163,12 +162,7 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
           <label htmlFor="sort" className={styles.sortLabel}>
             Sort by:
           </label>
-          <select
-            id="sort"
-            className={styles.sortSelect}
-            value={sortOption}
-            onChange={(e) => handleSort(e.target.value)}
-          >
+          <select id="sort" className={styles.sortSelect} value={sortOption} onChange={(e) => handleSort(e.target.value)} >
             <option value="default">Default</option>
             <option value="lowToHigh">Price: Low to High</option>
             <option value="highToLow">Price: High to Low</option>
@@ -181,8 +175,7 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
           <div key={product._id} className={styles.productCard}>
             <Link to={`/product/${product._id}`} className={styles.productLink}>
               <div className={styles.productImageContainer}>
-                <button
-                  className={styles.wishlistButton}
+                <button className={styles.wishlistButton}
                   onClick={(e) => {
                     e.preventDefault();
                     toggleWishlist(product._id);
@@ -194,21 +187,13 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
                     <FaRegHeart className={styles.wishlistIcon} />
                   )}
                 </button>
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className={styles.productImage}
-                />
+                <img src={product.image} alt={product.name} className={styles.productImage} />
               </div>
               <div className={styles.productDetails}>
                 <h3 className={styles.productName}>{product.name}</h3>
-                <p className={styles.productDescription}>
-                  {product.description}
-                </p>
                 <div className={styles.priceContainer}>
                   <span className={styles.price}>₹{product.price}</span>
-                  <button
-                    className={styles.addToCartBtn}
+                  <button className={styles.addToCartBtn}
                     onClick={(e) => {
                       e.preventDefault();
                       handleAddToCart(e, product);
