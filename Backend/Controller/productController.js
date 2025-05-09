@@ -1,7 +1,7 @@
 import Product from "../Models/Product.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
-
+import Review from "../Models/Reviews.model.js";
 dotenv.config();
 
 cloudinary.config({
@@ -38,13 +38,33 @@ export const getProducts = async (req, res) => {
 
         const query = tag ? { tag } : {};
 
-        const products = await Product.find(query);
+        const products = await Product.find(query).populate("review").sort({ createdAt: -1 });
+        console.log(products);
         res.json(products);
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Server error" });
     }
 };
+
+export const addReview = async (req, res) => {
+    try {
+        const { product } = req.body;
+        const productReview = await Product.findById(product);
+        const response = await Review.create(req.body);
+        if (response) {
+            productReview.review.push(response._id);
+            await productReview.save();
+        }
+        else {
+            throw new Error("Review not added");
+        }
+        res.status(200).json({ message: "review added successfully" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Server error" });
+    }
+}
 
 export const createProduct = async (req, res) => {
     const file = req.file;
@@ -83,6 +103,7 @@ export const getProductById = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
 
 export const updateProduct = async (req, res) => {
     try {
