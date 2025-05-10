@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { FaArrowLeft, FaHeart, FaRegHeart, FaStar, FaRegStar } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaHeart,
+  FaRegHeart,
+  FaStar,
+  FaRegStar,
+} from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
 import { HiMinus } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import styles from "./ProductPage.module.css";
 import { toast } from "react-hot-toast";
+import AddReview from "../../Components/AddReview/AddReview";
 
 const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
   const navigate = useNavigate();
@@ -15,6 +22,7 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false); // Add state for review modal
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -23,6 +31,7 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/${id}`
         );
+
         setProduct(response.data);
 
         try {
@@ -72,7 +81,9 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
     try {
       if (isInWishlist) {
         await axios.delete(
-          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/remove/${id}`,
+          `${
+            import.meta.env.VITE_BACKEND_API
+          }/api/productRoutes/wishlist/remove/${id}`,
           { withCredentials: true }
         );
         setIsInWishlist(false);
@@ -127,8 +138,37 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
     return stars;
   };
 
-  const writeReview = () => {
-    console.log("Write a review");
+  // Function to open the review modal
+  const openReviewModal = () => {
+    setIsReviewModalOpen(true);
+  };
+
+  // Function to close the review modal
+  const closeReviewModal = () => {
+    setIsReviewModalOpen(false);
+  };
+
+  // Function to refresh product data after review submission
+  const handleReviewAdded = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/product/${id}`
+      );
+      setProduct(response.data);
+    } catch (err) {
+      console.error("Error refreshing product data:", err);
+    }
+  };
+
+  // Format date for review display
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   if (loading) {
@@ -171,7 +211,7 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
               {renderStars(
                 product.review && product.review.length > 0
                   ? product.review.reduce((avg, r) => avg + r.rating, 0) /
-                  product.review.length
+                      product.review.length
                   : 0
               )}
             </div>
@@ -192,19 +232,30 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
               ))}
           </div>
 
-
           <div className={styles.actionContainer}>
             <div className={styles.quantityControls}>
-              <button className={styles.quantityButton} onClick={decrement} disabled={count <= 1} >
+              <button
+                className={styles.quantityButton}
+                onClick={decrement}
+                disabled={count <= 1}
+              >
                 <HiMinus />
               </button>
               <span className={styles.quantityDisplay}>{count}</span>
-              <button className={styles.quantityButton} onClick={increment} disabled={count >= product.quantity}>
+              <button
+                className={styles.quantityButton}
+                onClick={increment}
+                disabled={count >= product.quantity}
+              >
                 <GoPlus />
               </button>
             </div>
 
-            <button className={styles.addToCartButton} disabled={product.quantity <= 0} onClick={handleAddToCart} >
+            <button
+              className={styles.addToCartButton}
+              disabled={product.quantity <= 0}
+              onClick={handleAddToCart}
+            >
               {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
             </button>
           </div>
@@ -214,7 +265,10 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
       <div className={styles.reviewsSection}>
         <div className={styles.reviewsHeader}>
           <h2 className={styles.reviewsTitle}>Customer Reviews</h2>
-          <button className={styles.writeReviewButton} onClick={writeReview}>
+          <button
+            className={styles.writeReviewButton}
+            onClick={openReviewModal}
+          >
             Write a Review
           </button>
         </div>
@@ -222,19 +276,37 @@ const ProductPage = ({ onAddToWishlist, onOpenSidebar }) => {
           product.review.map((review, index) => (
             <div key={index} className={styles.reviewCard}>
               <div className={styles.reviewHeader}>
-                <div className={styles.reviewerName}>{review.customerName}</div>
-                <div className={styles.reviewDate}>2 days ago</div>
+                <div className={styles.reviewerInfo}>
+                  <div className={styles.reviewerName}>
+                    {review.customerName}
+                  </div>
+                  <div className={styles.reviewTitle}>{review.title}</div>
+                </div>
+                <div className={styles.reviewDate}>
+                  {formatDate(review.updatedAt)}
+                </div>
               </div>
               <div className={styles.starRating}>
                 {renderStars(review.rating)}
               </div>
-              <p className={styles.reviewContent}>{review.comment}</p>
+              <p className={styles.reviewContent}>{review.review}</p>
             </div>
           ))
         ) : (
-          <h3>No reviews yet</h3>
+          <div className={styles.noReviews}>
+            <h3>No reviews yet</h3>
+            <p>Be the first to review this product</p>
+          </div>
         )}
       </div>
+
+      {/* Review Modal */}
+      <AddReview
+        isOpen={isReviewModalOpen}
+        onClose={closeReviewModal}
+        productId={id}
+        onReviewAdded={handleReviewAdded}
+      />
     </div>
   );
 };

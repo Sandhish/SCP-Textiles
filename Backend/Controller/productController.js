@@ -38,8 +38,7 @@ export const getProducts = async (req, res) => {
 
         const query = tag ? { tag } : {};
 
-        const products = await Product.find(query).populate("review").sort({ createdAt: -1 });
-        console.log(products);
+        const products = await Product.find(query);
         res.json(products);
     } catch (error) {
         console.log(error);
@@ -93,10 +92,12 @@ export const createProduct = async (req, res) => {
 
 export const getProductById = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findById(req.params.id).populate("review").sort({ createdAt: -1 });
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
+        console.log(product);
+
         res.json(product);
     } catch (error) {
         console.log(error);
