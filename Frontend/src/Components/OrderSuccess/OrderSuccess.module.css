@@ -1,0 +1,202 @@
+.successContainer {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  background-color: #f8f9fa;
+}
+
+.successCard {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.successIcon {
+  font-size: 70px;
+  color: #4CAF50;
+  margin-bottom: 20px;
+  animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.successCard h1 {
+  margin: 0 0 15px;
+  color: #333;
+  font-size: 1.8rem;
+}
+
+.thankYouMessage {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.orderInfo {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 30px;
+}
+
+.orderInfoItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.orderInfoItem:last-child {
+  border-bottom: none;
+}
+
+.orderInfoItem span {
+  color: #666;
+}
+
+.orderInfoItem strong {
+  color: #333;
+}
+
+.shippingDetails {
+  text-align: left;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.shippingDetails h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.shippingDetails p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.emailMessage {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.viewOrdersButton, .continueShopping {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.continueShopping {
+  background-color: var(--button-color);
+  color: white;
+  border: 1px solid #ddd;
+}
+
+.continueShopping:hover {
+  background-color: var(--button-hover-color);
+}
+
+.viewOrdersButton svg, .continueShopping svg {
+  margin-right: 8px;
+}
+.loadingContainer, .errorContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  text-align: center;
+}
+
+.loader {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #4a90e2;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorContainer p {
+  color: #e53935;
+  margin-bottom: 20px;
+}
+
+.homeLink {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4a90e2;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.homeLink:hover {
+  background-color: #3a7bc8;
+}
+
+@media (max-width: 600px) {
+  .successCard {
+    padding: 25px;
+  }
+  
+  .successIcon {
+    font-size: 60px;
+  }
+  
+  .successCard h1 {
+    font-size: 1.5rem;
+  }
+  
+  .thankYouMessage {
+    font-size: 1rem;
+  }
+}

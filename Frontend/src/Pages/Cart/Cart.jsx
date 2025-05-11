@@ -316,7 +316,14 @@ const Cart = () => {
         </div>
       </div>
 
-      <CheckoutModal isOpen={isCheckoutModalOpen} onClose={closeCheckoutModal} finalTotal={calculateTotal()}
+      <CheckoutModal
+        isOpen={isCheckoutModalOpen}
+        onClose={closeCheckoutModal}
+        finalTotal={calculateTotal()}
+        calculateSubtotal={calculateSubtotal}
+        calculateDiscount={calculateDiscount}
+        calculateTax={calculateTax}
+        couponApplied={couponApplied}
         onSubmit={() => {
           closeCheckoutModal();
         }}

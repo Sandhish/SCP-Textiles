@@ -13,6 +13,7 @@ import AdminPage from "./Pages/AdminPage";
 import ProtectedRoute from "./Context/ProtectedRoute";
 import ToastProvider from "./Context/ToastProvider";
 import { CartProvider } from "./Context/CartContext";
+import OrderSuccess from "./Components/OrderSuccess/OrderSuccess";
 function App() {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -89,7 +90,10 @@ function App() {
                   />
                 }
               />
+              <Route path="order-success/:orderNumber" element={<OrderSuccess />} />
+              
             </Routes>
+
             <UserSidebar
               isOpen={isSidebarOpen}
               onClose={() => setIsSidebarOpen(false)}

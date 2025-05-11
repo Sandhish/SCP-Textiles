@@ -3,6 +3,7 @@ import connectDB from './Config/connnectDB.js';
 import cors from 'cors';
 import authRoutes from './Routes/authRoutes.js';
 import productRoutes from './Routes/productRoutes.js';
+import paymentRoutes from './Routes/paymentRoutes.js';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 app.use("/api/authRoutes", authRoutes);
 app.use("/api/productRoutes", productRoutes);
+app.use("/api/payment", paymentRoutes);
 
 app.get('/', (req, res) => {
     res.send("Server is running");
