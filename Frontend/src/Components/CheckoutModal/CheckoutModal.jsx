@@ -391,7 +391,7 @@ const CheckoutModal = ({ isOpen, onClose, finalTotal, calculateSubtotal = () => 
             }
 
             onSubmit();
-            navigate(`/order-success/${orderId}`);
+            navigate(`/order/${orderId}`);
         } catch (err) {
             console.error("Error creating order:", err);
             setError("Failed to process your order. Please try again.");

@@ -9,29 +9,9 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
   const [activeView, setActiveView] = useState("profile");
   const [previousView, setPreviousView] = useState(null);
   const [wishlistItems, setWishlistItems] = useState([]);
-  const [orderItems, setOrderItems] = useState([
-    {
-      id: 1,
-      orderNumber: 1001,
-      totalAmount: 5999,
-      date: "2023-05-15",
-      status: "Delivered",
-    },
-    {
-      id: 2,
-      orderNumber: 1002,
-      totalAmount: 3499,
-      date: "2023-06-20",
-      status: "Shipped",
-    },
-    {
-      id: 3,
-      orderNumber: 1003,
-      totalAmount: 7999,
-      date: "2023-07-10",
-      status: "Processing",
-    },
-  ]);
+  const [orderItems, setOrderItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [expandedOrder, setExpandedOrder] = useState(null);
 
   const navigate = useNavigate();
 
@@ -55,8 +35,44 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
         console.error("Error fetching wishlist:", err);
       }
     };
-    fetchWishlist();
-  }, []);
+
+    const fetchOrders = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_API}/api/payment/my-orders`,
+          { withCredentials: true }
+        );
+        
+        if (response.data) {
+          const mappedOrders = response.data.map((order) => ({
+            id: order._id,
+            orderNumber: order.orderNumber,
+            totalAmount: order.totalAmount,
+            date: new Date(order.createdAt).toLocaleDateString("en-IN"),
+            status: order.orderStatus,
+            products: order.products.map(item => ({
+              id: item.product._id,
+              name: item.product.name,
+              price: item.price,
+              quantity: item.quantity,
+              image: item.product.image || "/fallback.jpg"
+            }))
+          }));
+          setOrderItems(mappedOrders);
+        }
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchWishlist();
+      fetchOrders();
+    }
+  }, [isOpen]);
 
   const menuItems = [
     {
@@ -122,6 +138,15 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
     setPreviousView(null);
     await logout();
     window.location.reload();
+  };
+
+  const handleViewOrderDetails = (orderNumber) => {
+    navigate(`/order/${orderNumber}`);
+    onClose();
+  };
+  
+  const toggleOrderDetails = (orderId) => {
+    setExpandedOrder(expandedOrder === orderId ? null : orderId);
   };
 
   const renderHeader = () => {
@@ -209,34 +234,131 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
         return (
           <div className={styles.sidebarContent}>
             <div className={styles.ordersContent}>
-              <div className={styles.orderList}>
-                {orderItems.map((order) => (
-                  <div key={order.id} className={styles.orderItem}>
-                    <div className={styles.orderDetails}>
-                      <div className={styles.orderHeader}>
-                        <span className={styles.orderNumber}>
-                          Order #{order.orderNumber}
-                        </span>
-                        <span className={styles.orderStatus}>
-                          {order.status}
-                        </span>
+              {isLoading ? (
+                <div className={styles.loadingIndicator}>
+                  <p>Loading orders...</p>
+                </div>
+              ) : (
+                <div className={styles.orderList}>
+                  {orderItems.length > 0 ? (
+                    orderItems.map((order) => (
+                      <div 
+                        key={order.id} 
+                        className={styles.orderItem}
+                      >
+                        <div 
+                          className={styles.orderDetails}
+                          onClick={() => handleViewOrderDetails(order.orderNumber)}
+                        >
+                          <div className={styles.orderHeader}>
+                            <span className={styles.orderNumber}>
+                              Order #{order.orderNumber}
+                            </span>
+                            <span 
+                              className={`${styles.orderStatus} ${styles[order.status.toLowerCase()]}`}
+                            >
+                              {order.status}
+                            </span>
+                          </div>
+                          <div className={styles.orderInfo}>
+                            <span className={styles.orderDate}>{order.date}</span>
+                            <span className={styles.orderAmount}>
+                              ₹{order.totalAmount.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                        <div className={styles.orderProductsList}>
+                          {order.products && order.products.length > 0 && (
+                            <>
+                              <div className={styles.productThumbnails}>
+                                {order.products.slice(0, 3).map((product, idx) => (
+                                  <div 
+                                    key={`${order.id}-product-${idx}`} 
+                                    className={styles.productThumbnail}
+                                    title={product.name}
+                                  >
+                                    <img 
+                                      src={product.image} 
+                                      alt={product.name} 
+                                      className={styles.thumbnailImage}
+                                    />
+                                    {idx === 2 && order.products.length > 3 && (
+                                      <div 
+                                        className={styles.moreProducts}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleOrderDetails(order.id);
+                                        }}
+                                      >
+                                        +{order.products.length - 3}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                              
+                              {expandedOrder === order.id && (
+                                <div className={styles.expandedProductList}>
+                                  {order.products.map((product, idx) => (
+                                    <div 
+                                      key={`${order.id}-expanded-${idx}`}
+                                      className={styles.expandedProduct}
+                                      onClick={() => {
+                                        navigate(`/product/${product.id}`);
+                                        onClose();
+                                      }}
+                                    >
+                                      <div className={styles.expandedProductImage}>
+                                        <img 
+                                          src={product.image} 
+                                          alt={product.name} 
+                                          className={styles.expandedThumbnail}
+                                        />
+                                      </div>
+                                      <div className={styles.expandedProductDetails}>
+                                        <span className={styles.expandedProductName}>
+                                          {product.name}
+                                        </span>
+                                        <div className={styles.expandedProductMeta}>
+                                          <span className={styles.expandedProductPrice}>
+                                            ₹{product.price.toLocaleString()}
+                                          </span>
+                                          <span className={styles.expandedProductQuantity}>
+                                            × {product.quantity}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                        <button 
+                          className={styles.viewOrderBtn}
+                          onClick={() => handleViewOrderDetails(order.orderNumber)}
+                        >
+                          <ChevronRight size={20} />
+                        </button>
                       </div>
-                      <div className={styles.orderInfo}>
-                        <span className={styles.orderDate}>{order.date}</span>
-                        <span className={styles.orderAmount}>
-                          ₹{order.totalAmount.toLocaleString()}
-                        </span>
-                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.emptyOrders}>
+                      <p>No orders found</p>
+                      <button 
+                        className={styles.shopNowBtn}
+                        onClick={() => {
+                          navigate('/');
+                          onClose();
+                        }}
+                      >
+                        Shop Now
+                      </button>
                     </div>
-                    <ChevronRight size={20} />
-                  </div>
-                ))}
-                {orderItems.length === 0 && (
-                  <div className={styles.emptyOrders}>
-                    <p>No orders found</p>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -248,10 +370,22 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
               <div className={styles.wishlistItems}>
                 {wishlistItems.map((item) => (
                   <div key={item.id} className={styles.wishlistItem}>
-                    <div className={styles.wishlistItemImage}>
+                    <div 
+                      className={styles.wishlistItemImage}
+                      onClick={() => {
+                        navigate(`/product/${item.id}`);
+                        onClose();
+                      }}
+                    >
                       <img src={item.image || "/fallback.jpg"} alt={item.name || "Product"} className={styles.productImage} />
                     </div>
-                    <div className={styles.itemDetails}>
+                    <div 
+                      className={styles.itemDetails}
+                      onClick={() => {
+                        navigate(`/product/${item.id}`);
+                        onClose();
+                      }}
+                    >
                       <span className={styles.productName}>{item.name}</span>
                       <span className={styles.productPrice}>
                         ₹{item.price.toLocaleString()}
@@ -267,6 +401,15 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
                 {wishlistItems.length === 0 && (
                   <div className={styles.emptyWishlist}>
                     <p>Your wishlist is empty</p>
+                    <button 
+                      className={styles.shopNowBtn}
+                      onClick={() => {
+                        navigate('/');
+                        onClose();
+                      }}
+                    >
+                      Discover Products
+                    </button>
                   </div>
                 )}
               </div>
@@ -279,12 +422,31 @@ const UserSidebar = ({ isOpen, onClose, userData }) => {
           <div className={styles.sidebarContent}>
             <div className={styles.settingsContent}>
               <div className={styles.settingsList}>
-                <div className={styles.settingItem}>
+                <div 
+                  className={styles.settingItem}
+                  onClick={() => navigate("/profile")}
+                >
                   <span>Edit Profile</span>
                   <ChevronRight size={20} />
                 </div>
-                <div onClick={() => navigate("/forgot-password")} className={styles.settingItem} >
+                <div 
+                  onClick={() => {
+                    navigate("/forgot-password");
+                    onClose();
+                  }} 
+                  className={styles.settingItem}
+                >
                   <span>Change Password</span>
+                  <ChevronRight size={20} />
+                </div>
+                <div 
+                  onClick={() => {
+                    navigate("/address");
+                    onClose();
+                  }} 
+                  className={styles.settingItem}
+                >
+                  <span>Manage Addresses</span>
                   <ChevronRight size={20} />
                 </div>
               </div>

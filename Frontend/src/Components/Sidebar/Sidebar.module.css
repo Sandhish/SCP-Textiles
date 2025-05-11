@@ -309,3 +309,215 @@
   color: #666;
   text-align: center;
 }
+
+.orderAmount{
+  margin-left: 10px;
+}
+/* Add these to your existing Sidebar.module.css */
+
+.orderStatus {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.processing {
+  background-color: #fff8e6;
+  color: #b7791f;
+}
+
+.shipped {
+  background-color: #e6f7ff;
+  color: #0070f3;
+}
+
+.delivered {
+  background-color: #e6ffed;
+  color: #10b981;
+}
+
+.cancelled {
+  background-color: #fff1f0;
+  color: #ef4444;
+}
+
+.loadingIndicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 100%;
+}
+
+.shopNowBtn {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.shopNowBtn:hover {
+  background-color: #333;
+}
+
+.orderItem {
+  transition: background-color 0.2s;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orderItem:hover {
+  background-color: #f9f9f9;
+}
+
+.orderDetails {
+  cursor: pointer;
+}
+
+.productThumbnails {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  position: relative;
+}
+
+.productThumbnail {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.thumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.moreProducts {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.moreProducts:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.expandedProductList {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.expandedProduct {
+  display: flex;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.expandedProduct:hover {
+  background-color: #f0f0f0;
+}
+
+.expandedProductImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+
+.expandedThumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.expandedProductDetails {
+  margin-left: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.expandedProductName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.expandedProductMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.expandedProductPrice {
+  font-size: 0.875rem;
+  color: #777;
+}
+
+.expandedProductQuantity {
+  font-size: 0.875rem;
+  color: #777;
+}
+
+.orderProductsList {
+  margin-left: 16px;
+}
+
+.viewOrderBtn {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+
+.viewOrderBtn:hover {
+  color: #000;
+}
+
+.wishlistItemImage, .itemDetails {
+  cursor: pointer;
+}

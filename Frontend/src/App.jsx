@@ -90,7 +90,7 @@ function App() {
                   />
                 }
               />
-              <Route path="order-success/:orderNumber" element={<OrderSuccess />} />
+              <Route path="order/:orderNumber" element={<OrderSuccess />} />
               
             </Routes>
 

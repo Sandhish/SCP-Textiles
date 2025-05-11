@@ -15,10 +15,9 @@ const OrderSuccess = () => {
       try {
         setLoading(true);
         console.log("Fetching order details for:", orderNumber);
-        console.log("API URL:", `${import.meta.env.VITE_BACKEND_API}/api/payment/success/${orderNumber}`);
-
+        
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_API}/api/payment/success/${orderNumber}`,
+          `${import.meta.env.VITE_BACKEND_API}/api/payment/${orderNumber}`,
           { withCredentials: true }
         );
 
@@ -103,6 +102,36 @@ const OrderSuccess = () => {
             <span>Total Amount:</span>
             <strong>₹{orderDetails.totalAmount.toFixed(2)}</strong>
           </div>
+        </div>
+
+        <div className={styles.productsSection}>
+          <h3>Ordered Products</h3>
+          {orderDetails.products && orderDetails.products.length > 0 ? (
+            <div className={styles.productsList}>
+              {orderDetails.products.map((item, index) => (
+                <div key={index} className={styles.productItem}>
+                  <div className={styles.productImage}>
+                    {item.product.image ? (
+                      <img src={item.product.image} alt={item.product.name} />
+                    ) : (
+                      <div className={styles.noImage}>
+                        <FaBoxOpen />
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.productDetails}>
+                    <h4>{item.product.name}</h4>
+                    <div className={styles.productMeta}>
+                      <span>Qty: {item.quantity}</span>
+                      <span>₹{item.price.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No product details available</p>
+          )}
         </div>
 
         <div className={styles.shippingDetails}>
