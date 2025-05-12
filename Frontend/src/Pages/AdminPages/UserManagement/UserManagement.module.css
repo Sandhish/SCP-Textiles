@@ -44,8 +44,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.userTable th,
-.userTable td {
+.userTable th, .userTable td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
@@ -66,8 +65,7 @@
   gap: 8px;
 }
 
-.viewButton,
-.deleteButton {
+.viewButton, .deleteButton {
   padding: 6px 12px;
   border: none;
   border-radius: 4px;
@@ -107,51 +105,6 @@
   font-style: italic;
 }
 
-.userDetailsPanel {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.userDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.detailGroup {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 10px;
-}
-
-.detailLabel {
-  font-weight: 600;
-  color: #555;
-}
-
-.detailValue {
-  color: #333;
-}
-
-.closeButton {
-  margin-top: 15px;
-  padding: 8px 16px;
-  background-color: #95a5a6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  align-self: flex-start;
-  transition: background-color 0.3s ease;
-}
-
-.closeButton:hover {
-  background-color: #7f8c8d;
-}
-
-/* Modal styles */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -174,6 +127,25 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.detailsModal {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modalTitle {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
 .confirmModal h4 {
   font-size: 18px;
   margin-bottom: 15px;
@@ -193,8 +165,7 @@
   margin-top: 20px;
 }
 
-.cancelButton,
-.confirmButton {
+.cancelButton, .confirmButton, .closeButton {
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -221,7 +192,78 @@
   background-color: #c0392b;
 }
 
-/* Responsive adjustments */
+.closeButton {
+  background-color: var(--button-color);
+  color: white;
+}
+
+.closeButton:hover {
+  background-color: var(--button-hover-color);
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailGroup {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 10px;
+}
+
+.detailLabel {
+  font-weight: 600;
+  color: #555;
+}
+
+.detailValue {
+  color: #333;
+  word-break: break-all;
+}
+
+.purchasedProductsSection {
+  margin-top: 15px;
+}
+
+.subSectionTitle {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.noProducts {
+  font-style: italic;
+  color: #777;
+}
+
+.loadingText {
+  color: #777;
+  font-style: italic;
+}
+
+.productsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #f9f9f9;
+}
+
+.productsTable th, .productsTable td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.productsTable th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+}
+
 @media (max-width: 768px) {
   .userTable th:nth-child(3),
   .userTable td:nth-child(3) {
@@ -230,5 +272,10 @@
   
   .detailGroup {
     grid-template-columns: 1fr;
+  }
+  
+  .detailsModal {
+    width: 90%;
+    max-height: 90vh;
   }
 }

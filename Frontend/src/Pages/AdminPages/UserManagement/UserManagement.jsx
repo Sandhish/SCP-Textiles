@@ -9,15 +9,14 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [purchasedProducts, setPurchasedProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
 
-  // Fetch all users on component mount
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // Function to fetch all users
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -29,7 +28,7 @@ const UserManagement = () => {
       console.error("Error fetching users:", error);
       toast.error(
         error.response?.data?.message ||
-          "Failed to fetch users. Please try again.",
+        "Failed to fetch users. Please try again.",
         {
           position: "top-center",
           duration: 3000,
@@ -40,18 +39,16 @@ const UserManagement = () => {
     }
   };
 
-  // Function to get user details by ID
   const getUserDetails = async (userId) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${
-          import.meta.env.VITE_BACKEND_API
+        `${import.meta.env.VITE_BACKEND_API
         }/api/authRoutes/admin/getUsersById/${userId}`
       );
       setSelectedUser(response.data);
+      setShowDetailsModal(true);
 
-      // Fetch purchased products if any
       if (
         response.data.purchasedProduts &&
         response.data.purchasedProduts.length > 0
@@ -64,7 +61,7 @@ const UserManagement = () => {
       console.error("Error fetching user details:", error);
       toast.error(
         error.response?.data?.message ||
-          "Failed to fetch user details. Please try again.",
+        "Failed to fetch user details. Please try again.",
         {
           position: "top-center",
           duration: 3000,
@@ -75,15 +72,12 @@ const UserManagement = () => {
     }
   };
 
-  // Function to fetch purchased products details
   const fetchPurchasedProducts = async (productIds) => {
     setLoadingProducts(true);
     try {
-      // Using the existing getProductsByIds endpoint with comma-separated IDs
       const idsString = productIds.join(",");
       const response = await axios.get(
-        `${
-          import.meta.env.VITE_BACKEND_API
+        `${import.meta.env.VITE_BACKEND_API
         }/api/productRoutes/products/getProductsByIds?ids=${idsString}`
       );
       setPurchasedProducts(response.data);
@@ -91,7 +85,7 @@ const UserManagement = () => {
       console.error("Error fetching product details:", error);
       toast.error(
         error.response?.data?.message ||
-          "Failed to fetch product details. Please try again.",
+        "Failed to fetch product details. Please try again.",
         {
           position: "top-center",
           duration: 3000,
@@ -103,20 +97,16 @@ const UserManagement = () => {
     }
   };
 
-  // Function to delete a user
   const deleteUser = async (userId) => {
     setLoading(true);
     try {
       await axios.delete(
-        `${
-          import.meta.env.VITE_BACKEND_API
+        `${import.meta.env.VITE_BACKEND_API
         }/api/authRoutes/admin/deleteUser/${userId}`
       );
 
-      // Remove user from the state
       setUsers(users.filter((user) => user._id !== userId));
 
-      // Reset selected user if deleted
       if (selectedUser && selectedUser._id === userId) {
         setSelectedUser(null);
         setPurchasedProducts([]);
@@ -132,7 +122,7 @@ const UserManagement = () => {
       console.error("Error deleting user:", error);
       toast.error(
         error.response?.data?.message ||
-          "Failed to delete user. Please try again.",
+        "Failed to delete user. Please try again.",
         {
           position: "top-center",
           duration: 3000,
@@ -143,34 +133,35 @@ const UserManagement = () => {
     }
   };
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // Filter users based on search term
   const filteredUsers = users.filter(
     (user) =>
       user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Open confirmation modal
   const openConfirmModal = (user) => {
     setSelectedUser(user);
     setShowConfirmModal(true);
   };
 
-  // Close confirmation modal
   const closeConfirmModal = () => {
     setShowConfirmModal(false);
+  };
+
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedUser(null);
+    setPurchasedProducts([]);
   };
 
   return (
     <div className={styles.userManagementContainer}>
       <h2 className={styles.pageTitle}>User Management</h2>
 
-      {/* Search bar */}
       <div className={styles.searchContainer}>
         <input
           type="text"
@@ -181,7 +172,6 @@ const UserManagement = () => {
         />
       </div>
 
-      {/* User list */}
       <div className={styles.userListContainer}>
         <h3 className={styles.sectionTitle}>All Users</h3>
 
@@ -230,96 +220,92 @@ const UserManagement = () => {
         )}
       </div>
 
-      {/* User details panel */}
-      {selectedUser && (
-        <div className={styles.userDetailsPanel}>
-          <h3 className={styles.sectionTitle}>User Details</h3>
-          <div className={styles.userDetails}>
-            <div className={styles.detailGroup}>
-              <span className={styles.detailLabel}>ID:</span>
-              <span className={styles.detailValue}>{selectedUser._id}</span>
-            </div>
-            <div className={styles.detailGroup}>
-              <span className={styles.detailLabel}>Name:</span>
-              <span className={styles.detailValue}>{selectedUser.name}</span>
-            </div>
-            <div className={styles.detailGroup}>
-              <span className={styles.detailLabel}>Email:</span>
-              <span className={styles.detailValue}>{selectedUser.email}</span>
-            </div>
-            <div className={styles.detailGroup}>
-              <span className={styles.detailLabel}>Role:</span>
-              <span className={styles.detailValue}>
-                {selectedUser.role || "User"}
-              </span>
-            </div>
-            <div className={styles.detailGroup}>
-              <span className={styles.detailLabel}>Joined:</span>
-              <span className={styles.detailValue}>
-                {new Date(selectedUser.createdAt).toLocaleDateString()}
-              </span>
-            </div>
+      {showDetailsModal && selectedUser && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.detailsModal}>
+            <h3 className={styles.modalTitle}>User Details</h3>
+            <div className={styles.userDetails}>
+              <div className={styles.detailGroup}>
+                <span className={styles.detailLabel}>ID:</span>
+                <span className={styles.detailValue}>{selectedUser._id}</span>
+              </div>
+              <div className={styles.detailGroup}>
+                <span className={styles.detailLabel}>Name:</span>
+                <span className={styles.detailValue}>{selectedUser.name}</span>
+              </div>
+              <div className={styles.detailGroup}>
+                <span className={styles.detailLabel}>Email:</span>
+                <span className={styles.detailValue}>{selectedUser.email}</span>
+              </div>
+              <div className={styles.detailGroup}>
+                <span className={styles.detailLabel}>Role:</span>
+                <span className={styles.detailValue}>
+                  {selectedUser.role || "User"}
+                </span>
+              </div>
+              <div className={styles.detailGroup}>
+                <span className={styles.detailLabel}>Joined:</span>
+                <span className={styles.detailValue}>
+                  {new Date(selectedUser.createdAt).toLocaleDateString()}
+                </span>
+              </div>
 
-            {/* Purchased Products Section */}
-            <div className={styles.purchasedProductsSection}>
-              <h4 className={styles.subSectionTitle}>Purchased Products</h4>
+              <div className={styles.purchasedProductsSection}>
+                <h4 className={styles.subSectionTitle}>Purchased Products</h4>
 
-              {loadingProducts && (
-                <div className={styles.loadingText}>Loading products...</div>
-              )}
-
-              {!loadingProducts &&
-                (!selectedUser.purchasedProduts ||
-                  selectedUser.purchasedProduts.length === 0) && (
-                  <p className={styles.noProducts}>No purchased products.</p>
+                {loadingProducts && (
+                  <div className={styles.loadingText}>Loading products...</div>
                 )}
 
-              {!loadingProducts &&
-                selectedUser.purchasedProduts &&
-                selectedUser.purchasedProduts.length > 0 && (
-                  <div className={styles.productsList}>
-                    {purchasedProducts.length > 0 ? (
-                      <table className={styles.productsTable}>
-                        <thead>
-                          <tr>
-                            <th>Product Name</th>
-                            <th>Price</th>
-                            <th>Category</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {purchasedProducts.map((product) => (
-                            <tr key={product._id}>
-                              <td>{product.name}</td>
-                              <td>${product.price?.toFixed(2) || "N/A"}</td>
-                              <td>{product.category || "N/A"}</td>
+                {!loadingProducts &&
+                  (!selectedUser.purchasedProduts ||
+                    selectedUser.purchasedProduts.length === 0) && (
+                    <p className={styles.noProducts}>No purchased products.</p>
+                  )}
+
+                {!loadingProducts &&
+                  selectedUser.purchasedProduts &&
+                  selectedUser.purchasedProduts.length > 0 && (
+                    <div className={styles.productsList}>
+                      {purchasedProducts.length > 0 ? (
+                        <table className={styles.productsTable}>
+                          <thead>
+                            <tr>
+                              <th>Product Name</th>
+                              <th>Price</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    ) : (
-                      <p className={styles.productsLoading}>
-                        Loading product details...
-                      </p>
-                    )}
-                  </div>
-                )}
-            </div>
+                          </thead>
+                          <tbody>
+                            {purchasedProducts.map((product) => (
+                              <tr key={product._id}>
+                                <td>{product.name}</td>
+                                <td>₹{product.price?.toFixed(2) || "N/A"}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <p className={styles.productsLoading}>
+                          Loading product details...
+                        </p>
+                      )}
+                    </div>
+                  )}
+              </div>
 
-            <button
-              className={styles.closeButton}
-              onClick={() => {
-                setSelectedUser(null);
-                setPurchasedProducts([]);
-              }}
-            >
-              Close
-            </button>
+              <div className={styles.modalButtons}>
+                <button
+                  className={styles.closeButton}
+                  onClick={closeDetailsModal}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Confirmation Modal */}
       {showConfirmModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.confirmModal}>

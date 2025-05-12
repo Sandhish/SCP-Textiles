@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, UserRound, X, Menu } from "lucide-react";
 import styles from "./Navbar.module.css";
@@ -23,7 +23,8 @@ const Navbar = () => {
         setMenuOpen(false);
       }
     };
-
+    console.log(cartCount);
+    
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
