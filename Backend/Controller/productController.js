@@ -2,6 +2,7 @@ import Product from "../Models/Product.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 import Review from "../Models/Reviews.model.js";
+import e from "express";
 dotenv.config();
 
 cloudinary.config({
@@ -45,7 +46,21 @@ export const getProducts = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+export const getProductsByIds = async (req, res) => {
+    try {
+        const { ids } = req.query;
 
+        const productIds = ids.split(",").map((id) => id.trim());
+        const products = await Product.find({ _id: { $in: productIds } });
+        if (!products || products.length === 0) {
+            return res.status(404).json({ message: "Products not found" });
+        }
+        res.status(200).json(products);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
 export const addReview = async (req, res) => {
     try {
         const { product } = req.body;

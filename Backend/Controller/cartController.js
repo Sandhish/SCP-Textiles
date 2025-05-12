@@ -73,6 +73,8 @@ export const updateCart = async (req, res) => {
 
 export const addToWishlist = async (req, res) => {
     try {
+        console.log("called");
+
         const { product } = req.body;
         const customer = req.user._id;
         const wishlist = await Wishlist.findOne({ product, customer });

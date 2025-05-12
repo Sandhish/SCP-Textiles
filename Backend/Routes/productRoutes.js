@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProduct, getProducts, getProductById, updateProduct, deleteProduct, addReview, uploadProductImage } from '../Controller/productController.js';
+import { createProduct, getProducts, getProductById, updateProduct, deleteProduct, addReview, uploadProductImage, getProductsByIds } from '../Controller/productController.js';
 import { addToCart, getCart, removeFromCart, clearCart, updateCart, addToWishlist, getWishlist, removeFromWishlist } from '../Controller/cartController.js';
 import { createCoupon, getCoupons, getCouponById, updateCoupon, deleteCoupon, validateCoupon } from '../Controller/couponController.js';
 import { authMiddleware } from '../Middleware/authMiddleware.js';
@@ -13,6 +13,7 @@ const router = express.Router();
 
 router.get('/products', getProducts);
 router.get('/product/:id', getProductById);
+router.get('/products/getProductsByIds', getProductsByIds)
 router.post('/product/create', adminMiddleware, upload.single("image"), createProduct);
 router.put('/product/update/:id', adminMiddleware, updateProduct);
 router.delete('/product/delete/:id', adminMiddleware, deleteProduct);
