@@ -19,6 +19,11 @@ const Sidebar = ({ setActiveContent, activeContent, isMobile, onLogout }) => {
       icon: "👤 ",
     },
     {
+      id: "orderManagement",
+      label: "Manage Orders",
+      icon: "📦",
+    },
+    {
       id: "couponUpload",
       label: "Upload Coupon",
       icon: "🏷️",

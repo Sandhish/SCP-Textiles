@@ -8,6 +8,7 @@ import Sidebar from "./AdminPages/AdminSidebar/Sidebar";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../Services/authService";
 import UserManagement from "./AdminPages/UserManagement/UserManagement";
+import OrderManagement from "./AdminPages/OrderManagement/OrderManagement";
 
 const AdminPage = () => {
   const [activeContent, setActiveContent] = useState("productUpload");
@@ -37,6 +38,8 @@ const AdminPage = () => {
         return <ProductManagement />;
       case "userManagement":
         return <UserManagement />;
+      case "orderManagement":
+        return <OrderManagement />;
       case "couponUpload":
         return <CouponUpload />;
       case "couponManagement":

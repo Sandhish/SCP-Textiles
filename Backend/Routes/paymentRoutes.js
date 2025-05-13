@@ -5,6 +5,7 @@ import { authMiddleware } from '../Middleware/authMiddleware.js';
 import { Customer } from '../Models/Customer.model.js';
 import { Order } from '../Models/Order.model.js';
 import { Cart } from '../Models/Cart.model.js';
+import { adminMiddleware } from '../Middleware/adminMiddleware.js';
 
 dotenv.config();
 
@@ -70,10 +71,40 @@ router.post('/create', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'Error creating order', error: error.message });
     }
 });
+router.get('/all-orders', adminMiddleware, async (req, res) => {
+    try {
+        const orders = await Order.find()
+            .populate({
+                path: 'products.product',
+                select: 'name image price'
+            });
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ message: 'Error fetching orders', error: error.message });
+    }
+});
+router.post('/update-order-status', adminMiddleware, async (req, res) => {
+    try {
+        const { orderId, status } = req.body;
+
+        const order = await Order.findByIdAndUpdate(
+            orderId,
+            { orderStatus: status }
+        );
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+        res.status(200).json({ message: 'Order status updated successfully', order });
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        res.status(500).json({ message: 'Error updating order status', error: error.message });
+    }
+});
 
 router.get('/my-orders', authMiddleware, async (req, res) => {
     try {
-        const orders = await Order.find({ customer: req.user._id }) 
+        const orders = await Order.find({ customer: req.user._id })
             .populate({
                 path: 'products.product',
                 select: 'name image price'
@@ -112,7 +143,7 @@ router.get('/success/:orderNumber', authMiddleware, async (req, res) => {
     try {
         const order = await Order.findOne({
             orderNumber: req.params.orderNumber,
-            customer: req.user._id 
+            customer: req.user._id
         }).select('orderNumber shippingDetails totalAmount createdAt');
 
         if (!order) {
@@ -131,7 +162,7 @@ router.post('/create-payment-intent', authMiddleware, async (req, res) => {
         const { amount } = req.body;
 
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: Math.round(amount * 100), 
+            amount: Math.round(amount * 100),
             currency: 'inr',
             metadata: {
                 customerId: req.user._id.toString(),
