@@ -2,20 +2,22 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import styles from "./OrderSuccess.module.css";
-import { FaCheckCircle, FaHome, FaBoxOpen } from "react-icons/fa";
+import { FaCheckCircle, FaHome, FaBoxOpen, FaArrowLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const OrderSuccess = () => {
   const { orderNumber } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
         setLoading(true);
         console.log("Fetching order details for:", orderNumber);
-        
+
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_API}/api/payment/${orderNumber}`,
           { withCredentials: true }
@@ -70,6 +72,10 @@ const OrderSuccess = () => {
     );
   }
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -78,6 +84,10 @@ const OrderSuccess = () => {
   return (
     <div className={styles.successContainer}>
       <div className={styles.successCard}>
+        <button onClick={handleBack} className={styles.backButton}>
+          <FaArrowLeft />
+          <span>Back</span>
+        </button>
         <div className={styles.successIcon}>
           <FaCheckCircle />
         </div>
