@@ -87,11 +87,14 @@ router.get('/all-orders', adminMiddleware, async (req, res) => {
 router.post('/update-order-status', adminMiddleware, async (req, res) => {
     try {
         const { orderId, status } = req.body;
-
+        console.log('Order ID:', orderId);
+        console.log('Status:', status);
         const order = await Order.findByIdAndUpdate(
             orderId,
             { orderStatus: status }
         );
+        console.log('Updated Order:', order);
+
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }

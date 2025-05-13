@@ -67,6 +67,7 @@ const OrderManagement = () => {
   };
 
   const handleViewOrder = (order) => {
+    console.log(order.products[0].product.name);
     setCurrentOrder(order);
     setIsDetailModalOpen(true);
   };
@@ -80,18 +81,19 @@ const OrderManagement = () => {
 
   const handleSaveStatus = async () => {
     try {
-      const response = await axios.put(
+      const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_API}/api/payment/update-order-status`,
         {
           orderId: currentOrder._id,
-          orderStatus: newStatus,
-          trackingNumber: trackingNumber || undefined,
+          status: newStatus,
         }
       );
+      console.log(response);
 
-      setOrders((prev) =>
-        prev.map((o) => (o._id === currentOrder._id ? response.data : o))
-      );
+      // setOrders((prev) =>
+      //   prev.map((o) => (o._id === currentOrder._id ? response.data : o))
+      // );
+      console.log(orders);
 
       toast.success("Order status updated successfully!");
       setIsUpdateModalOpen(false);
@@ -288,19 +290,6 @@ const OrderManagement = () => {
             </select>
           </div>
 
-          {(newStatus === "shipped" || newStatus === "delivered") && (
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Tracking Number</label>
-              <input
-                type="text"
-                className={styles.formInput}
-                value={trackingNumber}
-                onChange={(e) => setTrackingNumber(e.target.value)}
-                placeholder="Enter tracking number"
-              />
-            </div>
-          )}
-
           <div className={styles.modalActions}>
             <button className={styles.saveButton} onClick={handleSaveStatus}>
               Save Changes
@@ -366,7 +355,11 @@ const OrderManagement = () => {
                   <tr key={order._id}>
                     <td>{order.orderNumber}</td>
                     <td>{formatDate(order.createdAt)}</td>
-                    <td>{order.shippingDetails.name}</td>
+                    <td>
+                      {console.log(order)}
+                      {order.shippingDetails.name}
+                    </td>
+
                     <td>
                       {order.products.reduce(
                         (total, item) => total + item.quantity,
@@ -380,6 +373,7 @@ const OrderManagement = () => {
                           order.orderStatus
                         )}`}
                       >
+                        {console.log(order.orderStatus)}
                         {order.orderStatus}
                       </span>
                     </td>
