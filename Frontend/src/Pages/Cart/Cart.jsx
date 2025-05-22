@@ -22,7 +22,7 @@ const Cart = () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart`,
-          { withCredentials: true, }
+          { withCredentials: true }
         );
 
         const cartData = res.data.map((item) => ({
@@ -79,7 +79,14 @@ const Cart = () => {
 
   const removeItem = async (itemId) => {
     try {
-      const result = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart/remove/${itemId}`);
+      const result = await axios.delete(
+        `${
+          import.meta.env.VITE_BACKEND_API
+        }/api/productRoutes/cart/remove/${itemId}`,
+        {
+          withCredentials: true,
+        }
+      );
       console.log(result.data);
       setCartItems((prevItems) =>
         prevItems.filter((item) => item.id !== itemId)
@@ -96,14 +103,17 @@ const Cart = () => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/coupon/validate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ code: couponCode }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/coupon/validate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ code: couponCode }),
+        }
+      );
 
       const data = await response.json();
 
@@ -129,7 +139,6 @@ const Cart = () => {
     return couponApplied ? calculateSubtotal() * (couponDiscount / 100) : 0;
   };
 
-
   const proceedToCheckout = () => {
     setIsCheckoutModalOpen(true);
   };
@@ -140,7 +149,12 @@ const Cart = () => {
 
   const clearCart = async () => {
     try {
-      const result = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart/clear`);
+      const result = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/cart/clear`,
+        {
+          withCredentials: true,
+        }
+      );
       console.log(result.data);
       setCartItems([]);
     } catch (err) {
@@ -161,7 +175,10 @@ const Cart = () => {
     return (
       <div className={styles.errorContainer}>
         <p>Error: {error}</p>
-        <button className={styles.retryButton} onClick={() => window.location.reload()} >
+        <button
+          className={styles.retryButton}
+          onClick={() => window.location.reload()}
+        >
           Retry
         </button>
       </div>
@@ -176,7 +193,10 @@ const Cart = () => {
         </div>
         <h2>Your cart is empty!</h2>
         <p>Looks like you haven't added anything to your cart yet.</p>
-        <button className={styles.continueShopping} onClick={() => (window.location.href = "/")} >
+        <button
+          className={styles.continueShopping}
+          onClick={() => (window.location.href = "/")}
+        >
           Continue Shopping
         </button>
       </div>
@@ -212,17 +232,32 @@ const Cart = () => {
                 </div>
 
                 <div className={styles.quantityControls}>
-                  <button className={styles.quantityButton} disabled={item.quantity <= 1} onClick={() => updateQuantity(item.id, item.quantity - 1)} >
+                  <button
+                    className={styles.quantityButton}
+                    disabled={item.quantity <= 1}
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  >
                     -
                   </button>
-                  <input type="text" className={styles.quantityInput} value={item.quantity} readOnly />
-                  <button className={styles.quantityButton} onClick={() => updateQuantity(item.id, item.quantity + 1)} >
+                  <input
+                    type="text"
+                    className={styles.quantityInput}
+                    value={item.quantity}
+                    readOnly
+                  />
+                  <button
+                    className={styles.quantityButton}
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  >
                     +
                   </button>
                 </div>
 
                 <div className={styles.itemActions}>
-                  <button className={styles.removeButton} onClick={() => removeItem(item.id)} >
+                  <button
+                    className={styles.removeButton}
+                    onClick={() => removeItem(item.id)}
+                  >
                     Remove
                   </button>
                 </div>
@@ -230,10 +265,13 @@ const Cart = () => {
             ))}
 
             <div className={styles.cartActions}>
-              <button className={styles.continueShoppingButton} onClick={() => (window.location.href = "/")} >
+              <button
+                className={styles.continueShoppingButton}
+                onClick={() => (window.location.href = "/")}
+              >
                 Continue Shopping
               </button>
-              <button className={styles.clearCartButton} onClick={clearCart} >
+              <button className={styles.clearCartButton} onClick={clearCart}>
                 Clear Cart
               </button>
             </div>
@@ -244,9 +282,16 @@ const Cart = () => {
 
             <div className={styles.couponSection}>
               <div className={styles.couponInput}>
-                <input type="text" placeholder="Enter Coupon Code" value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)} />
-                <button className={styles.applyCouponButton} onClick={applyCoupon} >
+                <input
+                  type="text"
+                  placeholder="Enter Coupon Code"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                />
+                <button
+                  className={styles.applyCouponButton}
+                  onClick={applyCoupon}
+                >
                   Apply
                 </button>
               </div>
@@ -292,12 +337,16 @@ const Cart = () => {
 
               <div className={styles.savingsRow}>
                 <span>
-                  You will save ₹{calculateDiscount().toLocaleString()} on this order
+                  You will save ₹{calculateDiscount().toLocaleString()} on this
+                  order
                 </span>
               </div>
             </div>
 
-            <button className={styles.checkoutButton} onClick={proceedToCheckout} >
+            <button
+              className={styles.checkoutButton}
+              onClick={proceedToCheckout}
+            >
               Proceed to Checkout
             </button>
 

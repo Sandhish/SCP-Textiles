@@ -31,7 +31,9 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
         }
 
         const response = await axios.get(
-          `http://localhost:5001/api/productRoutes/products?tag=${tag}`
+          `${
+            import.meta.env.VITE_BACKEND_API
+          }/api/productRoutes/products?tag=${tag}`
         );
         setProducts(response.data);
 
@@ -89,7 +91,9 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
     try {
       if (wishlist.has(productId)) {
         await axios.delete(
-          `${import.meta.env.VITE_BACKEND_API}/api/productRoutes/wishlist/remove/${productId}`,
+          `${
+            import.meta.env.VITE_BACKEND_API
+          }/api/productRoutes/wishlist/remove/${productId}`,
           { withCredentials: true }
         );
         setWishlist(
@@ -162,7 +166,12 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
           <label htmlFor="sort" className={styles.sortLabel}>
             Sort by:
           </label>
-          <select id="sort" className={styles.sortSelect} value={sortOption} onChange={(e) => handleSort(e.target.value)} >
+          <select
+            id="sort"
+            className={styles.sortSelect}
+            value={sortOption}
+            onChange={(e) => handleSort(e.target.value)}
+          >
             <option value="default">Default</option>
             <option value="lowToHigh">Price: Low to High</option>
             <option value="highToLow">Price: High to Low</option>
@@ -175,7 +184,8 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
           <div key={product._id} className={styles.productCard}>
             <Link to={`/product/${product._id}`} className={styles.productLink}>
               <div className={styles.productImageContainer}>
-                <button className={styles.wishlistButton}
+                <button
+                  className={styles.wishlistButton}
                   onClick={(e) => {
                     e.preventDefault();
                     toggleWishlist(product._id);
@@ -187,13 +197,18 @@ const ProductList = ({ onAddToWishlist, onOpenSidebar }) => {
                     <FaRegHeart className={styles.wishlistIcon} />
                   )}
                 </button>
-                <img src={product.image} alt={product.name} className={styles.productImage} />
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className={styles.productImage}
+                />
               </div>
               <div className={styles.productDetails}>
                 <h3 className={styles.productName}>{product.name}</h3>
                 <div className={styles.priceContainer}>
                   <span className={styles.price}>₹{product.price}</span>
-                  <button className={styles.addToCartBtn}
+                  <button
+                    className={styles.addToCartBtn}
                     onClick={(e) => {
                       e.preventDefault();
                       handleAddToCart(e, product);
