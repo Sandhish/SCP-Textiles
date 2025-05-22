@@ -12,9 +12,12 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 app.use(cors({
-    origin: ["http://localhost:5173", "https://scp-textiles.vercel.app"],
-    credentials: true,
+    origin: (origin, callback) => {
+        callback(null, true); // allow all origins
+    },
+    credentials: true
 }));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
