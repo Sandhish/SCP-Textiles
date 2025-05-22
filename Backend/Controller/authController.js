@@ -23,7 +23,7 @@ export const userRegister = async (req, res) => {
         const token = generateToken(payload);
         res.cookie("scpToken", token, {
             httpOnly: true,
-            secure: true,
+            path: "/",
             maxAge: 1 * 24 * 60 * 60 * 1000
         });
         res.status(201).json({ user });
