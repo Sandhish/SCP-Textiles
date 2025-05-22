@@ -24,6 +24,7 @@ export const userRegister = async (req, res) => {
         res.cookie("scpToken", token, {
             httpOnly: true,
             path: "/",
+            samesite: "none",
             maxAge: 1 * 24 * 60 * 60 * 1000
         });
         res.status(201).json({ user });
@@ -58,6 +59,7 @@ export const userLogin = async (req, res) => {
         res.cookie("scpToken", token, {
             httpOnly: true,
             path: "/",
+            samesite: "none",
             maxAge: 1 * 24 * 60 * 60 * 1000
         });
         res.status(200).json({ user });
@@ -87,6 +89,7 @@ export const adminLogin = async (req, res) => {
         res.cookie("scpToken", token, {
             httpOnly: true,
             path: "/",
+            samesite: "none",
             maxAge: 1 * 24 * 60 * 60 * 1000
         });
         res.status(200).json({ message: "Logged in successfully as admin 😈" });
