@@ -20,6 +20,7 @@ export const adminLogin = async (formData) => {
 };
 
 export const logout = async () => {
+    console.log(API_URL);
     const response = await axios.get(`${API_URL}/user/logout`);
     return response.data;
 };
