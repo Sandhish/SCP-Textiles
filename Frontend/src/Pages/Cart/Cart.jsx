@@ -343,6 +343,10 @@ const Cart = () => {
               </div>
             </div>
 
+            <div className={styles.securePayment}>
+              <span>Orders Cannot Be Cancelled</span>
+            </div>
+
             <button
               className={styles.checkoutButton}
               onClick={proceedToCheckout}

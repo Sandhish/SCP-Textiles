@@ -19,6 +19,16 @@
   margin-bottom: 1rem;
 }
 
+.securePayment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #777;
+  font-size: 13px;
+}
+
+
 .backButton:hover {
   color: var(--button-color);
 }
@@ -327,6 +337,7 @@
   font-weight: 500;
   text-align: center;
   margin-top: 15px;
+  margin-bottom: 10px;
 }
 
 .checkoutButton {
@@ -339,6 +350,7 @@
   font-size: 16px;
   font-weight: 600;
   margin: 15px 0;
+  margin-top: 5px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
