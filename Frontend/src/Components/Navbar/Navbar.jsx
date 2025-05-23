@@ -24,7 +24,7 @@ const Navbar = () => {
       }
     };
     console.log(cartCount);
-    
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -74,7 +74,7 @@ const Navbar = () => {
                   <X size={24} />
                 </button>
 
-                <form
+                {/* <form
                   className={styles.searchContainer}
                   onSubmit={handleSearchSubmit}
                 >
@@ -88,7 +88,7 @@ const Navbar = () => {
                   <button type="submit" className={styles.searchButton}>
                     <Search size={20} />
                   </button>
-                </form>
+                </form> */}
 
                 <nav className={styles.mobileNav}>
                   <ul>
@@ -184,7 +184,7 @@ const Navbar = () => {
           </div>
 
           <div className={styles.actions}>
-            {!isMobile && (
+            {/* {!isMobile && (
               <form
                 className={styles.searchContainer}
                 onSubmit={handleSearchSubmit}
@@ -200,7 +200,7 @@ const Navbar = () => {
                   <Search size={20} />
                 </button>
               </form>
-            )}
+            )} */}
 
             <div className={styles.cart}>
               <Link to="/cart" className={styles.cartLink}>
